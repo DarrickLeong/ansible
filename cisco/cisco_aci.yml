@@ -21,7 +21,7 @@
     #     state: present
     - name: gather ACI gather facts
       cisco.aci.aci_rest:
-        host: "{{ inventory_hostname }}"
+        host: 10.69.151.244
         user: "{{ username }}"
         password: "{{ password }}"
         validate_certs: false
