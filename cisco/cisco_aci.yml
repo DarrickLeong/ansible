@@ -1,6 +1,6 @@
 ---
 - name: Cisco ACI
-  hosts: 10.69.151.244
+  hosts: aci
   connection: local
   gather_facts: no
   vars:
@@ -19,6 +19,18 @@
     #     ap: "{{ _ap_ }}"
     #     description: "{{ _description_ }}"
     #     state: present
+    - name: ping aci host
+      cisco.aci.aci_ping:
+        host: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ _password_ }}"
+        validate_certs: false
+      register: ping
+
+    - name: print ping result 
+      ansible.builtin.debug:
+        var: ping
+
     - name: gather ACI gather facts
       cisco.aci.aci_rest:
         host: "{{ inventory_hostname }}"
@@ -28,6 +40,7 @@
         path: /api/node/class/infraRsFuncToEpg.json
         method: get
       register: aci_result
+      
     - name: print aci_result
       ansible.builtin.debug:
         var: aci_result
