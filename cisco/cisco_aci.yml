@@ -6,6 +6,7 @@
   vars:
     username: admin
     password: redhat123
+    inventory_hostname: 10.69.151.244
 
   tasks:
     # - name:  create connection with ACI
