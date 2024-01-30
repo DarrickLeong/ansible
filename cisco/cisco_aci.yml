@@ -1,0 +1,33 @@
+---
+- name: Cisco ACI
+  hosts: 10.69.151.244
+  connection: local
+  gather_facts: no
+  vars:
+    username: admin
+    password: redhat123
+
+  tasks:
+    # - name:  create connection with ACI
+    #   cisco.aci.aci_ap:
+    #     host: "{{ inventory_hostname }}"
+    #     user: "{{ username }}"
+    #     password: "{{ password }}"
+    #     validate_certs: false
+    #     tenant: "{{ _tenant_ }}"
+    #     ap: "{{ _ap_ }}"
+    #     description: "{{ _description_ }}"
+    #     state: present
+    - name: gather ACI gather facts
+      cisco.aci.aci_rest:
+        host: "{{ inventory_hostname }}"
+        user: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: false
+        path: /api/node/class/infraRsFuncToEpg.json
+        method: get
+      register: aci_result
+    - name: print aci_result
+      ansible.builtin.debug:
+        var: aci_result
+    
