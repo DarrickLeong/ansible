@@ -19,18 +19,6 @@
     #     ap: "{{ _ap_ }}"
     #     description: "{{ _description_ }}"
     #     state: present
-    - name: ping aci host
-      cisco.aci.aci_ping:
-        host: "{{ inventory_hostname }}"
-        username: "{{ username }}"
-        password: "{{ _password_ }}"
-        validate_certs: false
-      register: ping
-
-    - name: print ping result 
-      ansible.builtin.debug:
-        var: ping
-
     - name: gather ACI gather facts
       cisco.aci.aci_rest:
         host: "{{ inventory_hostname }}"
