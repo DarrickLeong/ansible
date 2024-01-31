@@ -1,5 +1,5 @@
 ---
-- name: Cisco ACI vlan create
+- name: Cisco ACI vlan delete
   hosts: aci
   connection: local
   gather_facts: no
@@ -9,16 +9,15 @@
     hostname: 10.69.151.244
 
   tasks:
-    - name: create switch leaf profile
+    - name: delete switch leaf profile
       cisco.aci.aci_switch_policy_leaf_profile:
         hostname: "{{ hostname }}"
         username: "{{ username }}"
         password: "{{ password }}"
         leaf_profile: SW_Leaf_101_102
-        description: created by Ansible
+        state: absent
         validate_certs: false
-        state: present
-
+      
     - name: Query a leaf profile
       cisco.aci.aci_switch_policy_leaf_profile:
         hostname: "{{ hostname }}"
@@ -28,25 +27,7 @@
         state: query
         validate_certs: false
       register: query_result_leaf_profile
-    
+
     - name: print switch leaf profile output
       ansible.builtin.debug:
         var: query_result_leaf_profile
-    
-
-
-    
-    
-    # - name: Query all cisco aci VLAN pool
-    #   cisco.aci.aci_vlan_pool:
-    #     host: "{{ hostname }}"
-    #     username: "{{ username }}"
-    #     password: "{{ password }}"
-    #     validate_certs: false
-    #     state: query
-    #   register: vlan_pool
-    
-    # - name: print out VLAN
-    #   ansible.builtin.debug:
-    #     var: vlan_pool
-    
