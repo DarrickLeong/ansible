@@ -11,9 +11,10 @@
   tasks:
     - name: Query all cisco aci VLAN pool
       cisco.aci.aci_vlan_pool:
-        hostname: "{{ hostname }}"
+        host: "{{ hostname }}"
         username: "{{ username }}"
         password: "{{ password }}"
+        validate_certs: false
         state: query
       register: vlan_pool
     
