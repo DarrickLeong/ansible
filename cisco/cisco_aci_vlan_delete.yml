@@ -31,3 +31,33 @@
     - name: print switch leaf profile output
       ansible.builtin.debug:
         var: query_result_leaf_profile
+
+    - name: delete leaf selector of switch profile
+      cisco.aci.aci_switch_leaf_selector:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        leaf_profile: SW_Leaf_101_102
+        leaf: leaf_selector_101
+        leaf_node_blk: 101
+        from: 101
+        to: 101
+        state: absent
+        validate_certs: false
+
+    - name: Query leaf selector of switch profile
+      cisco.aci.aci_switch_leaf_selector:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        leaf_profile: SW_Leaf_101_102
+        leaf: leaf_1
+        leaf_node_blk: 101
+        state: query
+        validate_certs: false
+      register: query_result_leaf_selector
+
+    - name: print output of query result for leaf selector
+      ansible.builtin.debug:
+        var: query_result_leaf_selector
+    
