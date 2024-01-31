@@ -9,17 +9,16 @@
     hostname: 10.69.151.244
 
   tasks:
-    - name: ping aci
-      cisco.aci.aci_ping:
+    - name: Query all cisco aci VLAN
+      cisco.aci.aci_vlan:
         hostname: "{{ hostname }}"
         username: "{{ username }}"
         password: "{{ _password_ }}"
         validate_certs: false
-        use_ssl: true
-        port: 443
-      register: ping_results
+        state: query
+      register: vlan_output
     
-    - name: print out ping result
+    - name: print out VLAN
       ansible.builtin.debug:
-        var: ping_results
+        var: vlan_output
     
