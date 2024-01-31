@@ -1,0 +1,25 @@
+---
+- name: Cisco ACI
+  hosts: aci
+  connection: local
+  gather_facts: no
+  vars:
+    username: admin
+    password: redhat123
+    hostname: 10.69.151.244
+
+  tasks:
+    - name: ping aci
+      cisco.aci.aci_ping:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ _password_ }}"
+        validate_certs: false
+        use_ssl: true
+        port: 443
+      register: ping_results
+    
+    - name: print out ping result
+      ansible.builtin.debug:
+        var: ping_results
+    
