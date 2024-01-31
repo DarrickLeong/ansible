@@ -9,16 +9,15 @@
     hostname: 10.69.151.244
 
   tasks:
-    - name: Query all cisco aci VLAN
-      cisco.aci.aci_vlan:
+    - name: Query all cisco aci VLAN pool
+      cisco.aci.aci_vlan_pool:
         hostname: "{{ hostname }}"
         username: "{{ username }}"
-        password: "{{ _password_ }}"
-        validate_certs: false
+        password: "{{ password }}"
         state: query
-      register: vlan_output
+      register: vlan_pool
     
     - name: print out VLAN
       ansible.builtin.debug:
-        var: vlan_output
+        var: vlan_pool
     
