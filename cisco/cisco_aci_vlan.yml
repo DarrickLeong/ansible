@@ -93,6 +93,7 @@
         password: "{{ password }}"
         leaf_interface_profile: SW_Leaf_101_102
         access_port_selector: SW_leaf_interface_profile_access_port
+        port_blk: SW_leaf_interface_profile_access_port_blk
         from_port: 5
         to_port: 7
         state: present
