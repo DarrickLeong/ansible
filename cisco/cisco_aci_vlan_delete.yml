@@ -136,7 +136,7 @@
         hostname: "{{ hostname }}"
         username: "{{ username }}"
         password: "{{ password }}"
-        lldp_policy: ansible_LLDP_ON
+        lldp_policy: Ansible_LLDP_ON
         state: absent
         validate_certs: false
 
