@@ -98,6 +98,22 @@
         to_port: 7
         state: present
         validate_certs: false
+
+    - name: Query access port selector for leaf interface profile
+      cisco.aci.aci_access_port_to_interface_policy_leaf_profile:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        leaf_interface_profile: SW_Leaf_101_102
+        state: query
+        validate_certs: false
+      register: query_result_access_port_blk
+    
+    - name: print query result access port selector for leaf interface profile
+      ansible.builtin.debug:
+        var: query_result_access_port_blk
+    
+
     
 
     
