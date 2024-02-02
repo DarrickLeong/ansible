@@ -112,6 +112,41 @@
     - name: print query result access port selector for leaf interface profile
       ansible.builtin.debug:
         var: query_result_access_port_blk
+
+    - name: Disable CDP Interface policy
+      cisco.aci.aci_interface_policy_cdp:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        name: Ansible_CDP_OFF
+        admin_state: false
+        state: present
+        validate_certs: false
+
+    - name: Enable LLDP Interface Policy
+      cisco.aci.aci_interface_policy_lldp:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        lldp_policy: Ansible_CDP_ON
+        receive_state: true
+        transmit_state: true
+        state: present
+        validate_certs: false
+
+    - name: Create Port Channel Policy
+      cisco.aci.aci_interface_policy_port_channel:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        port_channel: Ansible_LACP_ACTIVE
+        mode: active
+        validate_certs: false
+    
+    
+    
+    
+
     
 
     
