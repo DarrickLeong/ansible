@@ -230,7 +230,7 @@
         hostname: "{{ hostname }}"
         username: "{{ username }}"
         password: "{{ password }}"
-        policy_group: Ansible_VPC_Interface_Policy_Group
+        policy_group: Ansible_VPC_Interface_PG_Policy
         lag_type: node
         state: query
         validate_certs: false
