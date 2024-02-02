@@ -205,7 +205,7 @@
         lag_type: node
         cdp_policy: Ansible_CDP_OFF
         lldp_policy: Ansible_LLDP_OFF
-        port_channel: Ansible_LACP_ACTIVE
+        port_channel_policy: Ansible_LACP_ACTIVE
         validate_certs: false
     
 
