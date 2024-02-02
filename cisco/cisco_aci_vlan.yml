@@ -142,7 +142,7 @@
         hostname: "{{ hostname }}"
         username: "{{ username }}"
         password: "{{ password }}"
-        lldp_policy: Ansible_CDP_ON
+        lldp_policy: Ansible_LLDP_ON
         receive_state: true
         transmit_state: true
         state: present
@@ -153,7 +153,7 @@
         hostname: "{{ hostname }}"
         username: "{{ username }}"
         password: "{{ password }}"
-        lldp_policy: Ansible_CDP_ON
+        lldp_policy: Ansible_LLDP_ON
         state: query
         validate_certs: false
       register: query_result_LLDP_Interface_policy
