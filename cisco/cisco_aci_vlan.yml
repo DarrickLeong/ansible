@@ -122,6 +122,20 @@
         admin_state: false
         state: present
         validate_certs: false
+    
+    - name: Query CDP Interface policy
+      cisco.aci.aci_interface_policy_cdp:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        name: Ansible_CDP_OFF
+        state: query
+        validate_certs: false
+      register: query_result_CDP_Interface_policy
+
+    - name: print query result CDP Interface policy
+      ansible.builtin.debug:
+        var: query_result_CDP_Interface_policy
 
     - name: Enable LLDP Interface Policy
       cisco.aci.aci_interface_policy_lldp:
@@ -134,6 +148,20 @@
         state: present
         validate_certs: false
 
+    - name: Query LLDP Interface policy
+      cisco.aci.aci_interface_policy_lldp:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        lldp_policy: Ansible_CDP_ON
+        state: query
+        validate_certs: false
+      register: query_result_LLDP_Interface_policy
+
+    - name: print query result LLDP Interface policy
+      ansible.builtin.debug:
+        var: query_result_LLDP_Interface_policy
+
     - name: Create Port Channel Policy
       cisco.aci.aci_interface_policy_port_channel:
         hostname: "{{ hostname }}"
@@ -142,6 +170,22 @@
         port_channel: Ansible_LACP_ACTIVE
         mode: active
         validate_certs: false
+
+    - name: Query Port Channel Policy
+      cisco.aci.aci_interface_policy_port_channel:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        port_channel: Ansible_LACP_ACTIVE
+        state: query
+        validate_certs: false
+      register: query_result_Port_Channel_policy
+    
+    - name: print query result Port Channel Policy
+      ansible.builtin.debug:
+        var: query_result_Port_Channel_policy
+    
+    
     
     
     
