@@ -184,6 +184,17 @@
     - name: print query result Port Channel Policy
       ansible.builtin.debug:
         var: query_result_Port_Channel_policy
+
+    - name: Create leaf access port policy group
+      cisco.aci.aci_interface_policy_leaf_policy_group:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        policy_group: Ansible_Leaf_PG_Policy
+        lag_type: leaf
+        cdp_policy: Ansible_CDP_OFF
+        lldp_policy: Ansible_LLDP_ON
+    
     
     
     
