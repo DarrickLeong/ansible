@@ -194,6 +194,7 @@
         lag_type: leaf
         cdp_policy: Ansible_CDP_OFF
         lldp_policy: Ansible_LLDP_ON
+        validate_certs: false
     
     
     
