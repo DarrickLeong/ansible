@@ -185,16 +185,30 @@
       ansible.builtin.debug:
         var: query_result_Port_Channel_policy
 
-    - name: Create leaf access port policy group
+    - name: Create Leaf Access Port Policy Group
       cisco.aci.aci_interface_policy_leaf_policy_group:
         hostname: "{{ hostname }}"
         username: "{{ username }}"
         password: "{{ password }}"
-        policy_group: Ansible_Leaf_PG_Policy
+        policy_group: Ansible_Leaf_Access_Port_PG_Policy
         lag_type: leaf
         cdp_policy: Ansible_CDP_OFF
         lldp_policy: Ansible_LLDP_ON
         validate_certs: false
+
+    - name: Create VPC Interface Policy group
+      cisco.aci.aci_interface_policy_leaf_policy_group:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        policy_group: Ansible_VPC_Interface_PG_Policy
+        lag_type: node
+        cdp_policy: Ansible_CDP_OFF
+        lldp_policy: Ansible_LLDP_OFF
+        port_channel: Ansible_LACP_ACTIVE
+        validate_certs: false
+    
+
     
     
     
