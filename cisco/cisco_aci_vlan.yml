@@ -196,7 +196,24 @@
         lldp_policy: Ansible_LLDP_ON
         validate_certs: false
 
-    - name: Create VPC Interface Policy group
+    - name: Query Leaf Access Port Policy Group
+      cisco.aci.aci_interface_policy_leaf_policy_group:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        policy_group: Ansible_Leaf_Access_Port_PG_Policy
+        lag_type: leaf
+        cdp_policy: Ansible_CDP_ON
+        lldp_policy: Ansible_LLDP_OFF
+        state: query
+        validate_certs: false
+      register: query_result_leaf_access_port_pg
+
+    - name: print query result Leaf Access Port Policy Group
+      ansible.builtin.debug:
+        var: query_result_leaf_access_port_pg
+    
+    - name: Create VPC Interface Policy Group
       cisco.aci.aci_interface_policy_leaf_policy_group:
         hostname: "{{ hostname }}"
         username: "{{ username }}"
@@ -207,6 +224,23 @@
         lldp_policy: Ansible_LLDP_OFF
         port_channel_policy: Ansible_LACP_ACTIVE
         validate_certs: false
+
+    - name: Query VPC Interface Policy Group
+      cisco.aci.aci_interface_policy_leaf_policy_group:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        policy_group: Ansible_VPC_Interface_Policy_Group
+        lag_type: node
+        state: query
+        validate_certs: false
+      register: query_result_vpc_interface_pg
+
+    - name: print query VPC Interface Policy Group
+      ansible.builtin.debug:
+        var: query_result_vpc_interface_pg
+    
+    
     
 
     
