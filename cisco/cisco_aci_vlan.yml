@@ -247,7 +247,7 @@
         password: "{{ password }}"
         leaf_interface_profile: SW_Leaf_101_102
         state: present
-        validate_certs: 
+        validate_certs: false
         
     - name: Query Interface Profile of leaf profile
       cisco.aci.aci_interface_policy_leaf_profile:
