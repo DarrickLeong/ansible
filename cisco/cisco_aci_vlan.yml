@@ -250,7 +250,6 @@
         state: present
         validate_certs: false
     
-        
     - name: Query Interface selector profile to switch leaf profile
       cisco.aci.aci_interface_selector_to_switch_policy_leaf_profile:
         hostname: "{{ hostname }}"
@@ -264,11 +263,34 @@
     - name: Print query result of Interface Profile of Leaf Profile
       ansible.builtin.debug:
         var: query_result_Interface_Profile_leaf_profile
-        
+
+    - name: Associate Interface Policy group to Leaf Interface Profile with a policy group
+      cisco.aci.aci_interface_selector_to_switch_policy_leaf_profile:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        interface_profile: SW_Leaf_101_102
+        access_port_selector: SW_leaf_interface_profile_access_port
+        port_blk: SW_leaf_interface_profile_access_port_blk
+        from_port: 5
+        to_port: 7
+        policy_group: Ansible_VPC_Interface_PG_Policy
+        state: present
+        validate_certs: false
     
-    
-    
-    
+    - name: Query Interface Policy group associated to Leaf Interface Profile
+      cisco.aci.aci_interface_selector_to_switch_policy_leaf_profile:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        leaf_profile: SW_leaf_interface_profile_access_port
+        state: query
+        validate_certs: false
+      register: query_result_Interface_Policy_Group_leaf_Interface_profile
+
+    - name: Print Query result of Interface Policy Group associated to Leaf Interface Profile
+      ansible.builtin.debug:
+        var: query_result_Interface_Policy_Group_leaf_Interface_profile
 
 
     
