@@ -240,21 +240,23 @@
       ansible.builtin.debug:
         var: query_result_vpc_interface_pg
 
-    - name: Create Interface Profile
-      cisco.aci.aci_interface_policy_leaf_profile:
+    - name: Associate an interface selector profile to a switch leaf profile
+      cisco.aci.aci_interface_selector_to_switch_policy_leaf_profile:
         hostname: "{{ hostname }}"
         username: "{{ username }}"
         password: "{{ password }}"
-        leaf_interface_profile: SW_Leaf_101_102
+        leaf_profile: SW_Leaf_101_102
+        interface_selector: SW_Leaf_101_102
         state: present
         validate_certs: false
+    
         
-    - name: Query Interface Profile of leaf profile
-      cisco.aci.aci_interface_policy_leaf_profile:
+    - name: Query Interface selector profile to switch leaf profile
+      cisco.aci.aci_interface_selector_to_switch_policy_leaf_profile:
         hostname: "{{ hostname }}"
         username: "{{ username }}"
         password: "{{ password }}"
-        leaf_interface_profile: SW_Leaf_101_102
+        leaf_profile: SW_Leaf_101_102
         state: query
         validate_certs: false
       register: query_result_Interface_Profile_leaf_profile
