@@ -265,7 +265,7 @@
         var: query_result_Interface_Profile_leaf_profile
 
     - name: Associate Interface Policy group to Leaf Interface Profile with a policy group
-      cisco.aci.aci_interface_selector_to_switch_policy_leaf_profile:
+      cisco.aci.aci_access_port_to_interface_policy_leaf_profile:
         hostname: "{{ hostname }}"
         username: "{{ username }}"
         password: "{{ password }}"
@@ -279,11 +279,12 @@
         validate_certs: false
     
     - name: Query Interface Policy group associated to Leaf Interface Profile
-      cisco.aci.aci_interface_selector_to_switch_policy_leaf_profile:
+      cisco.aci.aci_access_port_to_interface_policy_leaf_profile:
         hostname: "{{ hostname }}"
         username: "{{ username }}"
         password: "{{ password }}"
-        leaf_profile: SW_leaf_interface_profile_access_port
+        interface_profile: SW_Leaf_101_102
+        access_port_selector: SW_leaf_interface_profile_access_port
         state: query
         validate_certs: false
       register: query_result_Interface_Policy_Group_leaf_Interface_profile
