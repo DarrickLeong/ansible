@@ -255,6 +255,33 @@
     - name: Print query result of Interface Profile of Leaf Profile
       ansible.builtin.debug:
         var: query_result_Interface_Profile_leaf_profile
+
+    - name: Remove associated Interface Policy group to Leaf Interface Profile with a policy group
+      cisco.aci.aci_access_port_to_interface_policy_leaf_profile:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        interface_profile: SW_Leaf_101_102
+        access_port_selector: SW_leaf_interface_profile_access_port
+        state: absent
+        validate_certs: false
+
+    - name: Query Interface Policy group associated to Leaf Interface Profile
+      cisco.aci.aci_access_port_to_interface_policy_leaf_profile:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        interface_profile: SW_Leaf_101_102
+        access_port_selector: SW_leaf_interface_profile_access_port
+        state: query
+        validate_certs: false
+      register: query_result_Interface_Policy_Group_leaf_Interface_profile
+
+    - name: Print Query result of Interface Policy Group associated to Leaf Interface Profile
+      ansible.builtin.debug:
+        var: query_result_Interface_Policy_Group_leaf_Interface_profile
+
+    
     
     
     
