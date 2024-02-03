@@ -231,6 +231,32 @@
     - name: print query VPC Interface Policy Group
       ansible.builtin.debug:
         var: query_result_vpc_interface_pg
+
+    - name: Remove Interface Selector Profile associated with a switch ppolicy leaf profile
+      cisco.aci.aci_interface_selector_to_switch_policy_leaf_profile:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        leaf_profile: SW_Leaf_101_102
+        interface_selector: SW_Leaf_101_102
+        state: absent
+        validate_certs: false
+
+    - name: Query Interface selector profile to switch leaf profile
+      cisco.aci.aci_interface_selector_to_switch_policy_leaf_profile:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        leaf_profile: SW_Leaf_101_102
+        state: query
+        validate_certs: false
+      register: query_result_Interface_Profile_leaf_profile
+
+    - name: Print query result of Interface Profile of Leaf Profile
+      ansible.builtin.debug:
+        var: query_result_Interface_Profile_leaf_profile
+    
+    
     
     
     
