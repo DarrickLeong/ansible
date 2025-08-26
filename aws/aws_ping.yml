@@ -5,3 +5,5 @@
   tasks:
     - name: Try to connect to AWS
       ansible.builtin.ping:
+    - name: Gather AWS account facts
+      amazon.aws.aws_facts:
