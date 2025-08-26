@@ -9,7 +9,7 @@
     - name: Gather AWS account facts
       ec2_remote_facts:
         aws_secret_key: "{{ AWS_SECRET_KEY_ID }}"
-        aws_access_key: "{{ AWS_SECRUITY_ACCESS_KEY}}"
+        aws_access_key: "{{ AWS_SECRUITY_ACCESS_KEY }}"
       register: aws_facts
 
     - name: Display aws_facts
