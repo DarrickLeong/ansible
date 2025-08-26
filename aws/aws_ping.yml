@@ -1,0 +1,7 @@
+---
+- name: AWS Playbook Lab
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Try to connect to AWS
+      ansible.builtin.ping:
