@@ -6,12 +6,10 @@
     - name: Try to connect to AWS
       ansible.builtin.ping:
 
-    - name: Gather AWS account facts
-      ec2_remote_facts:
-        aws_secret_key: "{{ AWS_SECRET_KEY_ID }}"
-        aws_access_key: "{{ AWS_SECRUITY_ACCESS_KEY }}"
-      register: aws_facts
+    - name: Gather AWS AZ information
+      amazon.aws.aws_az_info:
+      register: aws_az_info
 
-    - name: Display aws_facts
+    - name: Display aws_az_info
       debug:
-        var: aws_facts
+        var: aws_az_info
