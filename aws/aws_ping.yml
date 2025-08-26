@@ -8,6 +8,7 @@
 
     - name: Gather AWS AZ information
       amazon.aws.aws_az_info:
+        region: ap-southeast-2
       register: aws_az_info
 
     - name: Display aws_az_info
