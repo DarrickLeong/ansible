@@ -6,7 +6,7 @@
 
   vars:
     netbox_url: "http://{{ netbox_endpoint }}:8000"  # Replace with your NetBox URL
-    netbox_token: "{{ netbox_token }}"  # Replace with your NetBox API token
+    netbox_token: "{{ netbox_vault_token }}"  # Replace with your NetBox API token
 
   tasks:
     - name: "Ping the NetBox API root"
