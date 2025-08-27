@@ -5,7 +5,7 @@
   connection: local
 
   vars:
-    netbox_url: "http://{{ nextbox_endpoint }}:8000"  # Replace with your NetBox URL
+    netbox_url: "http://{{ netbox_endpoint }}:8000"  # Replace with your NetBox URL
     netbox_token: "{{ netbox_token }}"  # Replace with your NetBox API token
 
   tasks:
