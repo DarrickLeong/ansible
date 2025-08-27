@@ -1,0 +1,25 @@
+---
+- name: Test Connection to NetBox API
+  hosts: localhost
+  gather_facts: false
+  connection: local
+
+  vars:
+    netbox_url: "http://{{ nextbox_endpoint }}:8000"  # Replace with your NetBox URL
+    netbox_token: "{{ netbox_token }}"  # Replace with your NetBox API token
+
+  tasks:
+    - name: "Ping the NetBox API root"
+      ansible.builtin.uri:
+        url: "{{ netbox_url }}/api/"
+        method: GET
+        headers:
+          Authorization: "Token {{ netbox_token }}"
+          Content-Type: "application/json"
+        validate_certs: false  # Set to 'true' if you have a valid SSL certificate
+        status_code: 200       # We expect a successful HTTP 200 OK
+      register: result
+
+    - name: "Display Connection Status"
+      ansible.builtin.debug:
+        msg: "Successfully connected to NetBox! API version: {{ result.json.api-version }}"

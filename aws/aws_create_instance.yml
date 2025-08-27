@@ -1,0 +1,16 @@
+---
+- name: AWS create instance
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Create an EC2 instance
+      amazon.aws.ec2_instance:
+        region: ap-southeast-2
+        instance_type: t3.medium
+        image: ami-0b145534e1950b975
+        wait: yes
+      register: ec2
+
+    - name: Display instance information
+      debug:
+        var: ec2
