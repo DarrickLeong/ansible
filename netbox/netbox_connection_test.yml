@@ -22,4 +22,4 @@
 
     - name: "Display Connection Status"
       ansible.builtin.debug:
-        msg: "Successfully connected to NetBox! API version: {{ result.json.api-version }}"
+        msg: "Successfully connected to NetBox! API version: {{ result }}"
