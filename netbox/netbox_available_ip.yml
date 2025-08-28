@@ -26,6 +26,10 @@
         status_code: 200
       register: prefix_search_result
 
+    - name: print prefix_search_result
+      ansible.builtin.debug:
+        var: prefix_search_result
+
     - name: "Fail if prefix is not found or is not unique"
       ansible.builtin.fail:
         msg: "Prefix '{{ target_prefix }}' not found or more than one prefix matched."
