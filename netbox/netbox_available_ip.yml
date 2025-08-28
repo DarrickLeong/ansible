@@ -35,8 +35,6 @@
           # By OMITTING the 'address' key, we are telling NetBox to find the next available one for us.
           # You can add other details for the IP address object here.
           description: "IP allocated by Ansible on {{ ansible_date_time.iso8601 }}"
-          tags:
-            - ansible-allocated
             
         # 'present' ensures the IP address object exists. Since we didn't specify an address,
         # NetBox creates the next available one.
