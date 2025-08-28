@@ -5,7 +5,7 @@
 
 - name: Get Next Available IP from NetBox IPAM
   hosts: localhost
-  gather_facts: false
+  gather_facts: true
   connection: local
   
   # # This ensures that the modules from the netbox.netbox collection are available.
