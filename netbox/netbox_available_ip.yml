@@ -55,7 +55,7 @@
         body:
           description: "IP allocated by Ansible on {{ ansible_date_time.iso8601 }}"
           tags:
-            - ansible-allocated
+            - name: "ansible-allocated"
         validate_certs: false
         status_code: 201  # A successful creation returns HTTP 201
       register: new_ip_details
