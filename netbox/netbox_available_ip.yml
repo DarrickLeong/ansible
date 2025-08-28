@@ -5,7 +5,7 @@
 
 - name: Get Next Available IP from NetBox IPAM via API
   hosts: localhost
-  gather_facts: false
+  gather_facts: true
   connection: local
 
   # Define variables for connecting to NetBox.
