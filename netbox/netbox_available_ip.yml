@@ -1,56 +1,59 @@
 ---
-# This playbook retrieves the next available IP address from a specified prefix in NetBox.
-# It uses the netbox.netbox.netbox_ip_address module to perform the action.
-# The playbook runs locally on the Ansible control node.
+# This playbook retrieves and reserves the next available IP address from a specified prefix in NetBox.
+# It interacts directly with the NetBox API using the ansible.builtin.uri module.
+# This method works around an issue where the netbox_ip_address module might require assigning the IP to a device.
 
-- name: Get Next Available IP from NetBox IPAM
+- name: Get Next Available IP from NetBox IPAM via API
   hosts: localhost
-  gather_facts: true
+  gather_facts: false
   connection: local
-  
-  # # This ensures that the modules from the netbox.netbox collection are available.
-  # collections:
-  #   - netbox.netbox
 
   # Define variables for connecting to NetBox.
-  # It's recommended to manage these securely using Ansible Vault in a production environment.
   vars:
     netbox_url: "http://{{ netbox_endpoint }}:8000"  # Replace with your NetBox URL
     netbox_token: "{{ netbox_vault_token }}"  # Replace with your NetBox API token
     target_prefix: "192.168.1.0/24"           # <-- IMPORTANT: Replace with the prefix you want an IP from
 
   tasks:
-    - name: "Request the next available IP from the '{{ target_prefix }}' prefix"
-      # This is the core task that communicates with the NetBox API.
-      netbox.netbox.netbox_ip_address:
-        # Connection details for your NetBox instance.
-        netbox_url: "{{ netbox_url }}"
-        netbox_token: "{{ netbox_token }}"
-        
-        # The data payload for the API request.
-        data:
-          # Specify the parent prefix from which to get an IP.
-          prefix: "{{ target_prefix }}"
-          
-          # By OMITTING the 'address' key, we are telling NetBox to find the next available one for us.
-          # You can add other details for the IP address object here.
-          description: "IP allocated by Ansible on {{ ansible_date_time.iso8601 }}"
-            
-        # 'present' ensures the IP address object exists. Since we didn't specify an address,
-        # NetBox creates the next available one.
-        state: present
-        
-        # Set to 'true' if your NetBox instance uses a valid, trusted SSL certificate.
+    - name: "Find the ID of the prefix '{{ target_prefix }}'"
+      ansible.builtin.uri:
+        url: "{{ netbox_url }}/api/ipam/prefixes/?prefix={{ target_prefix | urlencode }}"
+        method: GET
+        headers:
+          Authorization: "Token {{ netbox_token }}"
+          Content-Type: "application/json"
         validate_certs: false
-        
-      # Register the output of this task into a variable named 'new_ip_details'.
+        status_code: 200
+      register: prefix_search_result
+
+    - name: "Fail if prefix is not found or is not unique"
+      ansible.builtin.fail:
+        msg: "Prefix '{{ target_prefix }}' not found or more than one prefix matched."
+      when: prefix_search_result.json.count != 1
+
+    - name: "Set prefix_id fact"
+      ansible.builtin.set_fact:
+        prefix_id: "{{ prefix_search_result.json.results[0].id }}"
+
+    - name: "Request the next available IP from prefix ID {{ prefix_id }}"
+      # A POST request to this endpoint creates and returns the next available IP.
+      ansible.builtin.uri:
+        url: "{{ netbox_url }}/api/ipam/prefixes/{{ prefix_id }}/available-ips/"
+        method: POST
+        headers:
+          Authorization: "Token {{ netbox_token }}"
+          Content-Type: "application/json"
+        body_format: json
+        body:
+          description: "IP allocated by Ansible on {{ ansible_date_time.iso8601 }}"
+          tags:
+            - ansible-allocated
+        validate_certs: false
+        status_code: 201  # A successful creation returns HTTP 201
       register: new_ip_details
 
     - name: "Display the newly allocated IP address"
-      # This task prints the result to the console for verification.
       ansible.builtin.debug:
-        msg: "Successfully allocated IP: {{ new_ip_details.ip_address.address }}"
-      
-      # This condition ensures the debug task only runs if an IP was successfully created.
-      when: new_ip_details.ip_address is defined and new_ip_details.ip_address
+        msg: "Successfully allocated IP: {{ new_ip_details.json.address }}"
+      when: new_ip_details.json.address is defined
 
