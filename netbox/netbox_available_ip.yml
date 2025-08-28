@@ -37,7 +37,7 @@
 
     - name: print prefix_search_result.json.results
       ansible.builtin.debug:
-        var: prefix_search_result.json.results[0]
+        var: prefix_search_result.json.results[0].id
 
     - name: "Set prefix_id fact"
       ansible.builtin.set_fact:
