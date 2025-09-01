@@ -14,7 +14,7 @@
         #     subnet_id: subnet-0dd132ff9f93f3e6f
         #     private_ip_address: 192.168.1.1
         security_group: default
-        vpc_subnet_id: vpc-0113e355c682543a5
+        vpc_subnet_id: my-vpc-01
         state: started
         wait: yes
       register: ec2
