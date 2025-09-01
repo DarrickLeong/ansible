@@ -10,8 +10,10 @@
         image_id: ami-0b145534e1950b975
         key_name: "linux_ssh"
         network_interfaces:
-          - primary: true
-            private_ip_address: 192.168.2.10
+          - assign_public_ip: true
+            private_ip_addresses:
+              - primary: true
+                private_ip_address: 192.168.2.10
         security_group: default
         state: started
         wait: yes
