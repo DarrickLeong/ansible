@@ -12,7 +12,7 @@
         network_interfaces:
           - primary: true
             private_ip_address: 192.168.2.10
-        security_groups: default
+        security_group: default
         state: started
         wait: yes
       register: ec2
