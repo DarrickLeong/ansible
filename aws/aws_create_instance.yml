@@ -13,7 +13,7 @@
         network_interfaces:
           - assign_public_ip: true
             subnet_id: subnet-0dd132ff9f93f3e6f
-            private_ip_address: 192.168.1.1
+            private_ip_address: 192.168.1.4
         security_groups: 
           - "sg-04f26d8509c8019a8"
         vpc_subnet_id: my-vpc-01
