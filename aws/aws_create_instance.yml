@@ -11,9 +11,7 @@
         key_name: "linux_ssh"
         network_interfaces:
           - assign_public_ip: true
-            private_ip_addresses:
-              - primary: true
-                private_ip_address: 192.168.2.10
+            private_ip_address: 192.168.2.10
         security_group: default
         state: started
         wait: yes
