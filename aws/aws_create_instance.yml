@@ -6,8 +6,11 @@
     - name: Create an EC2 instance
       amazon.aws.ec2_instance:
         region: ap-southeast-2
-        instance_type: t3.medium
+        instance_type: t2.micro
         image: ami-0b145534e1950b975
+        network_interfaces:
+          - primary: true
+            private_ip_address: 192.168.2.10
         wait: yes
       register: ec2
 
