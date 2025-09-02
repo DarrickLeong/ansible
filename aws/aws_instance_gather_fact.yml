@@ -6,7 +6,8 @@
   tasks:
     - name: Display inventory hostname variables
       debug:
-        var: inventory_hostname
+        # var: inventory_hostname
+        var: hostvars
     # - name: Gather EC2 instance facts
     #   amazon.aws.ec2_instance_facts:
     #     region: ap-southeast-2
