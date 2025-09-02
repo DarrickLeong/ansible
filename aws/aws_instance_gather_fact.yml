@@ -4,20 +4,19 @@
   connection: local
   gather_facts: false
   tasks:
-    - name: print ec2 vars
-      debug:
-        msg: "{{ ec2.instances[0].private_dns_name }}"
+    # - name: print ec2 vars
+    #   debug:
+    #     msg: "{{ ec2.instances[0].private_dns_name }}"
     - name: Display inventory hostname variables
       debug:
-        # var: inventory_hostname
         var: inventory_hostname
       when: inventory_hostname == ec2.instances[0].private_dns_name
-    # - name: Gather EC2 instance facts
-    #   amazon.aws.ec2_instance_facts:
-    #     region: ap-southeast-2
-    #     filters:
-    #       instance-id: "{{ ec2.instance_id }}"
-    #   register: ec2_facts
-    # - name: Display EC2 instance facts
-    #   debug:
-    #     var: ec2_facts
+      
+    - name: gather ip address from RHEL
+      ansible.builtin.command: "hostname -I"
+      register: ip_address
+      when: inventory_hostname == ec2.instances[0].private_dns_name
+
+    - name: Display ip address
+      debug:
+        var: ip_address.stdout
