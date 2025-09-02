@@ -20,5 +20,5 @@
 
     - name: Display hostname
       debug:
-        var: hostname.stdout
+        msg: "{{ hostname.stdout }}"
       when: inventory_hostname == ec2.instances[0].private_dns_name
