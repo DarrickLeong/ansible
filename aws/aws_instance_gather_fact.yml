@@ -6,7 +6,7 @@
   tasks:
     - name: print ec2 vars
       debug:
-        var: " {{ ec2.instances[0].private_dns_name }}"
+        msg: "{{ ec2.instances[0].private_dns_name }}"
     - name: Display inventory hostname variables
       debug:
         # var: inventory_hostname
