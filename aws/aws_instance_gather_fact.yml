@@ -11,9 +11,9 @@
       debug:
         var: inventory_hostname
       when: inventory_hostname == ec2.instances[0].private_dns_name
-      
+
     - name: gather ip address from RHEL
-      ansible.builtin.command: "hostname -I"
+      ansible.builtin.command: "hostname"
       register: ip_address
       when: inventory_hostname == ec2.instances[0].private_dns_name
 
