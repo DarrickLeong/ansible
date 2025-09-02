@@ -1,7 +1,7 @@
 ---
 - name: Gather instance fact
   hosts: all
-  connection: local
+  #connection: local
   gather_facts: false
   tasks:
     # - name: print ec2 vars
@@ -13,7 +13,7 @@
       when: inventory_hostname == ec2.instances[0].private_dns_name
 
     - name: gather hostname from RHEL
-      ansible.builtin.command: "/usr/bin/hostname"
+      ansible.builtin.command: "hostname"
       register: hostname
       when: inventory_hostname == ec2.instances[0].private_dns_name
 
