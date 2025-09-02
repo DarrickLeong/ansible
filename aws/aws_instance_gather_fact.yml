@@ -6,12 +6,12 @@
   tasks:
     - name: print ec2 vars
       debug:
-        var: " {{ ec2.instances.private_dns_name }}"
+        var: " {{ ec2.instances[0].private_dns_name }}"
     - name: Display inventory hostname variables
       debug:
         # var: inventory_hostname
         var: hostvars
-      when: inventory_hostname == "{{ ec2.instances.private_dns_name }}"
+      when: inventory_hostname == "{{ ec2.instances[0].private_dns_name }}"
     # - name: Gather EC2 instance facts
     #   amazon.aws.ec2_instance_facts:
     #     region: ap-southeast-2
