@@ -3,6 +3,7 @@
   hosts: all
   #connection: local
   gather_facts: false
+  remote_user: ec2-user
   tasks:
     # - name: print ec2 vars
     #   debug:
