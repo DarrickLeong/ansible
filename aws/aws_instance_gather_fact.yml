@@ -1,6 +1,6 @@
 ---
 - name: Gather instance fact
-  hosts: localhost
+  hosts: all
   connection: local
   gather_facts: false
   tasks:
