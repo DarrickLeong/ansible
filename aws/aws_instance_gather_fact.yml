@@ -22,7 +22,7 @@
 
     - name: Query AAP inventory to obtain host ID
       ansible.builtin.uri:
-        url: "{{ aap_url }}/api/v2/inventories/hosts/?name={{ ec2.instances[0].private_dns_name }}"
+        url: "{{ aap_url }}/api/controller/v2/inventories/hosts/?name={{ ec2.instances[0].private_dns_name }}"
         method: GET
         headers:
           Content-Type: "application/json"
@@ -38,7 +38,7 @@
 
     - name: Query AAP inventory to obtain variable data
       ansible.builtin.uri:
-        url: "{{ aap_url }}/api/v2/hosts/{{ aap_host_query.json.results[0].id }}/variable_data/"
+        url: "{{ aap_url }}/api/controller/v2/hosts/{{ aap_host_query.json.results[0].id }}/variable_data/"
         method: GET
         headers:
           Content-Type: "application/json"
@@ -50,7 +50,7 @@
 
     # - name: Edit AAP inventory with variable data
     #   ansible.builtin.uri:
-    #     url: "{{ aap_url }}/api/v2/hosts/{{ aap_host_query.json.results[0].id }}/variable_data/"
+    #     url: "{{ aap_url }}/api/controller/v2/hosts/{{ aap_host_query.json.results[0].id }}/variable_data/"
     #     method: PATCH
     #     headers:
     #       Content-Type: "application/json"
