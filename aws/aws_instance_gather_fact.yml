@@ -48,6 +48,18 @@
       register: aap_host_vars
       when: aap_host_query.json.results | length > 0
 
+    # - name: Edit AAP inventory with variable data
+    #   ansible.builtin.uri:
+    #     url: "{{ aap_url }}/api/v2/hosts/{{ aap_host_query.json.results[0].id }}/variable_data/"
+    #     method: PATCH
+    #     headers:
+    #       Content-Type: "application/json"
+    #       Authorization: "Bearer {{ aap_token }}"
+    #     status_code: 200 # Expect a "OK" status on success
+    #     validate_certs: yes # Set to 'no' for self-signed certs
+    #     body: "{{ aap_host_vars.json }}"
+    #   when: aap_host_query.json.results | length > 0
+
     # - name: gather hostname from RHEL
     #   ansible.builtin.command: "hostname"
     #   register: hostname
