@@ -4,14 +4,45 @@
   #connection: local
   gather_facts: false
   remote_user: ec2-user
+  
+  vars:
+    aap_url: "{{ aap_controller_url }}"
+    aap_token: "{{ CONTROLLER_OAUTH_TOKEN }}"
+    # aap_inventory_id: "YOUR_AAP_INVENTORY_ID"
+
   tasks:
-    # - name: print ec2 vars
-    #   debug:
-    #     msg: "{{ ec2.instances[0].private_dns_name }}"
+    - name: print aap_url & aap_token vars
+      debug:
+        msg: "aap_url: {{ aap_url }}, aap_token: {{ aap_token }}"
+
     - name: Display inventory hostname variables
       debug:
         var: inventory_hostname
       when: inventory_hostname == ec2.instances[0].private_dns_name
+
+    - name: Query AAP inventory to obtain host ID
+      ansible.builtin.uri:
+        url: "{{ aap_url }}/api/v2/inventories/{{ aap_inventory_id }}/hosts/?name={{ ec2.instances[0].private_dns_name }}"
+        method: GET
+        headers:
+          Content-Type: "application/json"
+          Authorization: "Bearer {{ aap_token }}"
+        status_code: 200 # Expect a "OK" status on success
+        validate_certs: yes # Set to 'no' for self-signed certs
+      register: aap_host_query
+      when: ec2.instances
+
+    - name: Query AAP inventory to obtain variable data
+      ansible.builtin.uri:
+        url: "{{ aap_url }}/api/v2/hosts/{{ aap_host_query.json.results[0].id }}/variable_data/"
+        method: GET
+        headers:
+          Content-Type: "application/json"
+          Authorization: "Bearer {{ aap_token }}"
+        status_code: 200 # Expect a "OK" status on success
+        validate_certs: yes # Set to 'no' for self-signed certs
+      register: aap_host_vars
+      when: aap_host_query.json.results | length > 0
 
     - name: gather hostname from RHEL
       ansible.builtin.command: "hostname"
