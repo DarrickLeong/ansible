@@ -48,6 +48,10 @@
       register: aap_host_vars
       when: aap_host_query.json.results | length > 0
 
+    - name: Print aap_host_vars
+      debug:
+        msg: "{{ aap_host_vars.json }}"
+
     # - name: Edit AAP inventory with variable data
     #   ansible.builtin.uri:
     #     url: "{{ aap_url }}/api/controller/v2/hosts/{{ aap_host_query.json.results[0].id }}/variable_data/"
