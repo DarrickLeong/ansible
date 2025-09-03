@@ -6,7 +6,7 @@
   remote_user: ec2-user
   
   vars:
-    aap_url: "{{ aap_controller_url }}"
+    aap_url: "{{ host }}"
     aap_token: "{{ CONTROLLER_OAUTH_TOKEN }}"
     # aap_inventory_id: "YOUR_AAP_INVENTORY_ID"
 
