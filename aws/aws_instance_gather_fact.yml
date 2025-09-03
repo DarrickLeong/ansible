@@ -30,7 +30,11 @@
         status_code: 200 # Expect a "OK" status on success
         validate_certs: yes # Set to 'no' for self-signed certs
       register: aap_host_query
-      when: ec2.instances
+      when: inventory_hostname == ec2.instances[0].private_dns_name
+
+    - name: Print aap_host_query
+      debug:
+        var: aap_host_query
 
     - name: Query AAP inventory to obtain variable data
       ansible.builtin.uri:
