@@ -6,14 +6,14 @@
   remote_user: ec2-user
   
   vars:
-    aap_url: "{{ CONTROLLER_HOST }}"
-    aap_token: "{{ CONTROLLER_OAUTH_TOKEN }}"
+    # aap_url: "{{ CONTROLLER_HOST }}"
+    # aap_token: "{{ CONTROLLER_OAUTH_TOKEN }}"
     # aap_inventory_id: "YOUR_AAP_INVENTORY_ID"
 
   tasks:
     - name: print aap_url & aap_token vars
       debug:
-        msg: "aap_url: {{ aap_url }}, aap_token: {{ aap_token }}"
+        msg: "aap_url: {{ CONTROLLER_HOST }}, aap_token: {{ CONTROLLER_OAUTH_TOKEN }}"
 
     - name: Display inventory hostname variables
       debug:
