@@ -6,8 +6,8 @@
   remote_user: ec2-user
   
   vars:
-    aap_url: "{{ default(lookup('env', 'CONTROLLER_HOST')) }}"
-    aap_token: "{{ default(lookup('env', 'CONTROLLER_OAUTH_TOKEN')) }}"
+    aap_url: "{{ lookup('env', 'CONTROLLER_HOST') }}"
+    aap_token: "{{ lookup('env', 'CONTROLLER_OAUTH_TOKEN') }}"
     # aap_inventory_id: "YOUR_AAP_INVENTORY_ID"
 
   tasks:
