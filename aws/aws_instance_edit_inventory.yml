@@ -60,7 +60,7 @@
           Content-Type: "application/json"
           Authorization: "Bearer {{ aap_token }}"
         body:
-          ansible_host: "{{ ec2.instances[0].public_ip }}"
+          ansible_host: "{{ ec2.instances[0].public_ip_address }}"
         status_code: 200 # Expect a "OK" status on success
         validate_certs: yes # Set to 'no' for self-signed certs
       register: aap_host_vars
