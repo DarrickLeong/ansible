@@ -18,7 +18,7 @@
     - name: Display inventory hostname variables
       debug:
         var: inventory_hostname
-      when: inventory_hostname == ec2.instances[0].private_dns_name
+      # when: inventory_hostname == ec2.instances[0].private_dns_name
 
     - name: Query AAP inventory to obtain host ID
       ansible.builtin.uri:
@@ -30,7 +30,7 @@
         status_code: 200 # Expect a "OK" status on success
         validate_certs: yes # Set to 'no' for self-signed certs
       register: aap_host_query
-      when: inventory_hostname == ec2.instances[0].private_dns_name
+      # when: inventory_hostname == ec2.instances[0].private_dns_name
 
     - name: Print aap_host_query
       debug:
