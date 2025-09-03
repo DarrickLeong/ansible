@@ -22,7 +22,7 @@
 
     - name: Query AAP inventory to obtain host ID
       ansible.builtin.uri:
-        url: "{{ aap_url }}/api/v2/inventories/{{ aap_inventory_id }}/hosts/?name={{ ec2.instances[0].private_dns_name }}"
+        url: "{{ aap_url }}/api/v2/inventories/hosts/?name={{ ec2.instances[0].private_dns_name }}"
         method: GET
         headers:
           Content-Type: "application/json"
