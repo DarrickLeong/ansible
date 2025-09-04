@@ -68,4 +68,4 @@
     - name: set stats for new IP details
       ansible.builtin.set_stats:
         data:
-          new_ip_address: "{{ new_ip_details.json.address }}"
+          new_ip_address: "{{ new_ip_details.json.address | ipaddr('address') }}"
