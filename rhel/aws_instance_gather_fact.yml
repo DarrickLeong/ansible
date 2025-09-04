@@ -1,0 +1,22 @@
+---
+- name: Gather instance fact
+  hosts: all
+  #connection: local
+  gather_facts: false
+  remote_user: ec2-user
+  
+  # vars:
+  #   aap_url: "{{ lookup('env', 'CONTROLLER_HOST') }}"
+  #   aap_token: "{{ lookup('env', 'CONTROLLER_OAUTH_TOKEN') }}"
+    # aap_inventory_id: "YOUR_AAP_INVENTORY_ID"
+
+  tasks:
+    - name: gather hostname from RHEL
+      ansible.builtin.command: "hostname"
+      register: hostname
+      when: inventory_hostname == ec2.instances[0].private_dns_name
+
+    - name: Display hostname
+      debug:
+        msg: "{{ hostname.stdout }}"
+      when: inventory_hostname == ec2.instances[0].private_dns_name
