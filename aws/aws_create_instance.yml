@@ -3,6 +3,10 @@
   hosts: localhost
   connection: local
   tasks:
+    - name: Display new ip details
+      debug:
+        msg: "New instance IP: {{ new_ip_details.json.address }}"
+        
     - name: Create an EC2 instance
       amazon.aws.ec2_instance:
         region: ap-southeast-2
