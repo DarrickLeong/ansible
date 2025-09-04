@@ -20,3 +20,13 @@
       debug:
         msg: "{{ hostname.stdout }}"
       when: inventory_hostname == new_ec2_instance.instances[0].private_dns_name
+
+    - name: gather linux name
+      ansible.builtin.command: "cat /etc/os-release | grep NAME"
+      register: linux_name
+      when: inventory_hostname == new_ec2_instance.instances[0].private_dns_name
+
+    - name: Display linux name
+      debug:
+        msg: "{{ linux_name.stdout }}"
+      when: inventory_hostname == new_ec2_instance.instances[0].private_dns_name
