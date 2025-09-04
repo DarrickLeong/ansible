@@ -14,9 +14,9 @@
     - name: gather hostname from RHEL
       ansible.builtin.command: "hostname"
       register: hostname
-      when: inventory_hostname == ec2.instances[0].private_dns_name
+      when: inventory_hostname == new_ec2_instance.instances[0].private_dns_name
 
     - name: Display hostname
       debug:
         msg: "{{ hostname.stdout }}"
-      when: inventory_hostname == ec2.instances[0].private_dns_name
+      when: inventory_hostname == new_ec2_instance.instances[0].private_dns_name

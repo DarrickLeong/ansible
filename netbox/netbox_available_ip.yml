@@ -65,3 +65,7 @@
         msg: "Successfully allocated IP: {{ new_ip_details.json.address }}"
       when: new_ip_details.json.address is defined
 
+    - name: set stats for new IP details
+      ansible.builtin.set_stats:
+        data:
+          new_ip_address: "{{ new_ip_details.json.address }}"

@@ -6,7 +6,7 @@
     - name: Display new ip details
       debug:
         msg: "New instance IP: {{ new_ip_details.json.address }}"
-        
+
     - name: Create an EC2 instance
       amazon.aws.ec2_instance:
         region: ap-southeast-2
@@ -29,3 +29,8 @@
     - name: Display instance information
       debug:
         var: ec2
+    
+    - name: set stats for new ec2 instance
+      ansible.builtin.set_stats:
+        data:
+          new_ec2_instance: "{{ ec2 }}"

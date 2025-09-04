@@ -17,12 +17,12 @@
 
     - name: Display inventory hostname variables
       debug:
-        msg: "{{ ec2.instances[0].private_dns_name }}"
+        msg: "{{ new_ec2_instance.instances[0].private_dns_name }}"
       # when: inventory_hostname == ec2.instances[0].private_dns_name
 
     - name: Query AAP inventory to obtain host ID
       ansible.builtin.uri:
-        url: "{{ aap_url }}/api/controller/v2/hosts/?name={{ ec2.instances[0].private_dns_name }}"
+        url: "{{ aap_url }}/api/controller/v2/hosts/?name={{ new_ec2_instance.instances[0].private_dns_name }}"
         method: GET
         headers:
           Content-Type: "application/json"
