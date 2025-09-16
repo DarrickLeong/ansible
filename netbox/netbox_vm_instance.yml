@@ -54,6 +54,8 @@
       debug:
         msg: "{{ item.tags.Name | default(item.instance_id) }}"
       loop: "{{ ec2_info.instances }}"
+      loop_control:
+        label: "{{ item.tags.Name | default(item.instance_id) }}"
 
     - name: Create NetBox VM Instance
       ansible.builtin.uri:
