@@ -1,0 +1,19 @@
+---
+- name: AWS create instance
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Display instance DNS name
+      debug:
+        msg: "New instance DNS name: {{ target_dns_name }}"
+
+    - name: Query and register ec2 instance details
+      amazon.aws.ec2_instance_info:
+        region: ap-southeast-2
+        filters:
+          "private-dns-name": "{{ target_dns_name }}"
+      register: ec2
+
+    - name: Display instance information
+      debug:
+        var: ec2

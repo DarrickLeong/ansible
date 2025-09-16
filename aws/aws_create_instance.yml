@@ -39,7 +39,3 @@
       ansible.builtin.set_stats:
         data:
           new_ec2_instance: "{{ ec2 }}"
-
-    - name: Display new_ec2_instance
-      debug:
-        var: new_ec2_instance
