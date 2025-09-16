@@ -87,4 +87,7 @@
 
     - name: Display Creation Status
       ansible.builtin.debug:
-        msg: "Successfully created NetBox VM Instance! ID: {{ create_result.json.id }}, Name: {{ create_result.json.name }}"
+        msg: "Successfully created NetBox VM Instance! ID: {{ item.json.id }}, Name: {{ item.json.name }}"
+      loop: "{{ create_result.results }}"
+      loop_control:
+        label: "{{ item.json.name }}"
