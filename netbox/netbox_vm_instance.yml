@@ -25,6 +25,21 @@
       ansible.builtin.debug:
         msg: "Successfully connected to NetBox! API version: {{ result }}"
 
+    - name: gather Netbox virtual machine clusters
+      ansible.builtin.uri:
+        url: "{{ netbox_url }}/api/virtualization/clusters/"
+        method: GET
+        headers:
+          Authorization: "Token {{ netbox_token }}"
+          Content-Type: "application/json"
+        validate_certs: false  # Set to 'true' if you have a valid SSL certificate
+        status_code: 200       # We expect a successful HTTP 200 OK
+      register: clusters
+
+    - name: "Display NetBox Clusters"
+      ansible.builtin.debug:
+        var: clusters
+
     - name: gather ec2 instance variables
       amazon.aws.ec2_instance_info:
         region: ap-southeast-2
