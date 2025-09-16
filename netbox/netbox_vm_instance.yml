@@ -34,3 +34,34 @@
     - name: print ec2_info
       debug:
         var: ec2_info
+
+    - name: Create NetBox VM Instance
+      ansible.builtin.uri:
+        url: "{{ netbox_url }}/api/virtualization/virtual-machines/"
+        method: POST
+        headers:
+          Authorization: "Token {{ netbox_token }}"
+          Content-Type: "application/json"
+        validate_certs: false
+        body: >
+          {
+            "name": "{{ ec2_info.instances[0].tags.Name }}",
+            "cluster": "{{ ec2_info.instances[0].tags.Cluster }}",
+            "status": "active",
+            "platform": "linux",
+            "memory": "{{ ec2_info.instances[0].memory }}",
+            "vcpus": "{{ ec2_info.instances[0].vcpus }}",
+            "disk": "{{ ec2_info.instances[0].disk }}"
+            "custom_fields": {
+              "instance_id": "{{ ec2_info.instances[0].instance_id }}",
+              "private_ip": "{{ ec2_info.instances[0].private_ip_address }}",
+              "public_ip": "{{ ec2_info.instances[0].public_ip_address }}"
+              "security_group_id": "{{ ec2_info.instances[0].security_groups.group_id }}"
+            }
+          }
+        status_code: 201
+      register: create_result
+
+    - name: Display Creation Status
+      ansible.builtin.debug:
+        msg: "Successfully created NetBox VM Instance! ID: {{ create_result.id }}"
