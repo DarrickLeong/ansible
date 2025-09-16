@@ -44,16 +44,16 @@
     #     region: ap-southeast-2
     #     filters:
     #       "instance-type": "t2.micro"
-    #   register: ec2
+    #   register: new_ec2_instance
 
-    # - name: print ec2
+    # - name: print new_ec2_instance
     #   debug:
-    #     var: ec2
+    #     var: new_ec2_instance
     
-    - name: print loop ec2.instances
+    - name: print loop new_ec2_instance.instances
       debug:
         msg: "{{ item.tags.Name | default(item.instance_id) }}"
-      loop: "{{ ec2.instances }}"
+      loop: "{{ new_ec2_instance.instances }}"
       loop_control:
         label: "{{ item.tags.Name | default(item.instance_id) }}"
 
@@ -80,7 +80,7 @@
             }
           }
         status_code: 201
-      loop: "{{ ec2.instances }}"
+      loop: "{{ new_ec2_instance.instances }}"
       loop_control:
         label: "{{ item.tags.Name | default(item.instance_id) }}"
       register: create_result
