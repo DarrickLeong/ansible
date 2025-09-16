@@ -17,3 +17,8 @@
     - name: Display instance information
       debug:
         var: ec2
+
+    - name: set stats for new ec2 instance
+      ansible.builtin.set_stats:
+        data:
+          ec2_instance: "{{ ec2 }}"
