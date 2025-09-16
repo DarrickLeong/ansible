@@ -73,8 +73,11 @@
             }
           }
         status_code: 201
+      loop: "{{ ec2_info.instances }}"
+      loop_control:
+        label: "{{ item.tags.Name | default(item.instance_id) }}"
       register: create_result
 
     - name: Display Creation Status
       ansible.builtin.debug:
-        msg: "Successfully created NetBox VM Instance! ID: {{ create_result.id }}"
+        msg: "Successfully created NetBox VM Instance! ID: {{ create_result.json.id }}, Name: {{ create_result.json.name }}"
