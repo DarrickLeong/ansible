@@ -9,20 +9,20 @@
     netbox_token: "{{ netbox_vault_token }}"  # Replace with your NetBox API token
 
   tasks:
-    - name: "Ping the NetBox API"
-      ansible.builtin.uri:
-        url: "{{ netbox_url }}/api/"
-        method: GET
-        headers:
-          Authorization: "Token {{ netbox_token }}"
-          Content-Type: "application/json"
-        validate_certs: false  # Set to 'true' if you have a valid SSL certificate
-        status_code: 200       # We expect a successful HTTP 200 OK
-      register: result
+    # - name: "Ping the NetBox API"
+    #   ansible.builtin.uri:
+    #     url: "{{ netbox_url }}/api/"
+    #     method: GET
+    #     headers:
+    #       Authorization: "Token {{ netbox_token }}"
+    #       Content-Type: "application/json"
+    #     validate_certs: false  # Set to 'true' if you have a valid SSL certificate
+    #     status_code: 200       # We expect a successful HTTP 200 OK
+    #   register: result
 
-    - name: "Display Connection Status"
-      ansible.builtin.debug:
-        msg: "Successfully connected to NetBox! API version: {{ result }}"
+    # - name: "Display Connection Status"
+    #   ansible.builtin.debug:
+    #     msg: "Successfully connected to NetBox! API version: {{ result }}"
 
     - name: gather Netbox virtual machine clusters
       ansible.builtin.uri:
@@ -39,21 +39,21 @@
       ansible.builtin.debug:
         var: netbox_clusters
 
-    - name: gather ec2 instance variables
-      amazon.aws.ec2_instance_info:
-        region: ap-southeast-2
-        filters:
-          "instance-type": "t2.micro"
-      register: ec2_info
+    # - name: gather ec2 instance variables
+    #   amazon.aws.ec2_instance_info:
+    #     region: ap-southeast-2
+    #     filters:
+    #       "instance-type": "t2.micro"
+    #   register: ec2
 
-    - name: print ec2_info
-      debug:
-        var: ec2_info
+    # - name: print ec2
+    #   debug:
+    #     var: ec2
     
-    - name: print loop ec2_info.instances
+    - name: print loop ec2.instances
       debug:
         msg: "{{ item.tags.Name | default(item.instance_id) }}"
-      loop: "{{ ec2_info.instances }}"
+      loop: "{{ ec2.instances }}"
       loop_control:
         label: "{{ item.tags.Name | default(item.instance_id) }}"
 
@@ -80,7 +80,7 @@
             }
           }
         status_code: 201
-      loop: "{{ ec2_info.instances }}"
+      loop: "{{ ec2.instances }}"
       loop_control:
         label: "{{ item.tags.Name | default(item.instance_id) }}"
       register: create_result
