@@ -55,7 +55,7 @@
               "private_ip": "{{ ec2_info.instances[0].private_ip_address }}",
               "public_ip": "{{ ec2_info.instances[0].public_ip_address }}"
               "instance_type": "{{ ec2_info.instances[0].instance_type }}",
-              "security_group_id": "{{ ec2_info.instances[0].security_groups.group_id }}"
+              "security_group_id": "{{ ec2_info.instances[0].security_groups[0].group_id }}"
             }
           }
         status_code: 201
