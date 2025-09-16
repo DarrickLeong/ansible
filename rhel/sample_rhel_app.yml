@@ -1,0 +1,44 @@
+---
+- name: Gather instance fact
+  hosts: all
+  #connection: local
+  gather_facts: false
+  remote_user: ec2-user
+  
+  # vars:
+  #   aap_url: "{{ lookup('env', 'CONTROLLER_HOST') }}"
+  #   aap_token: "{{ lookup('env', 'CONTROLLER_OAUTH_TOKEN') }}"
+    # aap_inventory_id: "YOUR_AAP_INVENTORY_ID"
+
+  tasks:
+    - name: install httpd
+      ansible.builtin.yum:
+        name: httpd
+        state: present
+      when: inventory_hostname == new_ec2_instance.instances[0].private_dns_name
+
+    - name: start httpd
+      ansible.builtin.service:
+        name: httpd
+        state: started
+        enabled: true
+      when: inventory_hostname == new_ec2_instance.instances[0].private_dns_name
+  
+    - name: create sample index.html
+      ansible.builtin.copy:
+        dest: /var/www/html/index.html
+        content: "<h1>Welcome to {{ new_ec2_instance.instances[0].tags.Name | default(new_ec2_instance.instances[0].instance_id) }} on RHEL!</h1>\n<p>This page is served by Apache HTTP Server.</p>"
+        owner: apache
+        group: apache
+        mode: '0644'
+      when: inventory_hostname == new_ec2_instance.instances[0].private_dns_name
+
+    - name: Test Apache HTTP Server
+      ansible.builtin.uri:
+        url: "http://{{ new_ec2_instance.instances[0].public_ip_address }}"
+        return_content: yes
+      register: apache_test
+      retries: 5
+      delay: 10
+      until: apache_test.status == 200
+      when: inventory_hostname == new_ec2_instance.instances[0].private_dns_name
