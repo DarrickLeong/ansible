@@ -62,7 +62,7 @@
 
     - name: "Display the newly allocated IP address"
       ansible.builtin.debug:
-        msg: "Successfully allocated IP: {{ new_ip_details.json.address }}" with ID: {{ new_ip_details.json.id }}"
+        msg: "Successfully allocated IP: {{ new_ip_details.json.address }} with ID: {{ new_ip_details.json.id }}"
       when: new_ip_details.json.address is defined
 
     - name: set stats for new IP details
