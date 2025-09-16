@@ -68,7 +68,7 @@
         body_format: json
         body: >
           {
-            "name": "{{ ec2_info.instances[0].tags.Name }}",
+            "name": "{{ item.tags.Name | default(item.instance_id) }}",
             "cluster": "{{ netbox_clusters.json.results[0].id }}",
             "status": "active",
             "custom_fields": {
