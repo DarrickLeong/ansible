@@ -7,7 +7,6 @@
   vars:
     netbox_url: "http://{{ netbox_endpoint }}:8000"  # Replace with your NetBox URL
     netbox_token: "{{ netbox_vault_token }}"  # Replace with your NetBox API token
-    netbox_cluster: "0"  # Replace with your NetBox cluster name
 
   tasks:
     - name: "Ping the NetBox API"
@@ -34,11 +33,11 @@
           Content-Type: "application/json"
         validate_certs: false  # Set to 'true' if you have a valid SSL certificate
         status_code: 200       # We expect a successful HTTP 200 OK
-      register: clusters
+      register: netbox_clusters
 
     - name: "Display NetBox Clusters"
       ansible.builtin.debug:
-        var: clusters
+        var: netbox_clusters
 
     - name: gather ec2 instance variables
       amazon.aws.ec2_instance_info:
@@ -63,7 +62,7 @@
         body: >
           {
             "name": "{{ ec2_info.instances[0].tags.Name }}",
-            "cluster": "{{ netbox_cluster }}",
+            "cluster": "{{ netbox_clusters.json.results[0].id }}",
             "status": "active",
             "custom_fields": {
               "instance_id": "{{ ec2_info.instances[0].instance_id }}",
