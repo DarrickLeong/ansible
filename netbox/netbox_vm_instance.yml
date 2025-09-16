@@ -7,7 +7,7 @@
   vars:
     netbox_url: "http://{{ netbox_endpoint }}:8000"  # Replace with your NetBox URL
     netbox_token: "{{ netbox_vault_token }}"  # Replace with your NetBox API token
-    netbox_cluster: "aws-cluster"  # Replace with your NetBox cluster name
+    netbox_cluster: "0"  # Replace with your NetBox cluster name
 
   tasks:
     - name: "Ping the NetBox API"
@@ -50,7 +50,6 @@
             "name": "{{ ec2_info.instances[0].tags.Name }}",
             "cluster": "{{ netbox_cluster }}",
             "status": "active",
-            "platform": "linux",
             "custom_fields": {
               "instance_id": "{{ ec2_info.instances[0].instance_id }}",
               "private_ip": "{{ ec2_info.instances[0].private_ip_address }}",
