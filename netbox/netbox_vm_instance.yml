@@ -50,13 +50,11 @@
             "cluster": "{{ netbox_cluster }}",
             "status": "active",
             "platform": "linux",
-            "memory": "{{ ec2_info.instances[0].memory }}",
-            "vcpus": "{{ ec2_info.instances[0].vcpus }}",
-            "disk": "{{ ec2_info.instances[0].disk }}"
             "custom_fields": {
               "instance_id": "{{ ec2_info.instances[0].instance_id }}",
               "private_ip": "{{ ec2_info.instances[0].private_ip_address }}",
               "public_ip": "{{ ec2_info.instances[0].public_ip_address }}"
+              "instance_type": "{{ ec2_info.instances[0].instance_type }}",
               "security_group_id": "{{ ec2_info.instances[0].security_groups.group_id }}"
             }
           }
