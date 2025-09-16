@@ -23,3 +23,11 @@
     - name: Display NetBox VM query result
       ansible.builtin.debug:
         var: result
+
+    - name: Display NetBox VM security group ID
+      ansible.builtin.debug:
+        msg: "Security Group ID: {{ result.json.results[0].custom_fields.security_group_id }}"
+
+    - name: set security_group_id fact
+      ansible.builtin.set_fact:
+        security_group_id: "{{ result.json.results[0].custom_fields.security_group_id }}"

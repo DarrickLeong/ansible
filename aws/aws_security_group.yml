@@ -7,9 +7,19 @@
       amazon.aws.ec2_security_group_info:
         region: ap-southeast-2
         filters:
-          "group-id": "sg-04f26d8509c8019a8"
+          "group-id": "{{ security_group_id }}"
       register: aws_sg_details
-      
-    - name: Display aws_sg_details
-      debug:
-        var: aws_sg_details
+
+    - name: edit security group inbound rules
+      amazon.aws.ec2_security_group:
+        region: ap-southeast-2
+        name: "{{ aws_sg_details.security_groups[0].group_name }}"
+        group_id: "{{ aws_sg_details.security_groups[0].group_id }}"
+        description: "Updated security group for web servers"
+        vpc_id: "{{ aws_sg_details.security_groups[0].vpc_id }}"
+        rules:
+          - proto: tcp
+            ports:
+              - 80
+            cidr_ip:  "0.0.0.0/0"
+            rule_desc: "Allow HTTP from anywhere"
