@@ -38,7 +38,7 @@
         url: "http://{{ ec2_instance.instances[0].public_ip_address }}"
         return_content: yes
       register: apache_response
-      retries: 5
-      delay: 10
+      retries: 3
+      delay: 5
       until: apache_response.status == 200
       when: inventory_hostname == ec2_instance.instances[0].private_dns_name

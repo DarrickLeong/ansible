@@ -29,5 +29,6 @@
         msg: "Security Group ID: {{ result.json.results[0].custom_fields.security_group_id }}"
 
     - name: set security_group_id fact
-      ansible.builtin.set_fact:
-        security_group_id: "{{ result.json.results[0].custom_fields.security_group_id }}"
+      ansible.builtin.set_stats:
+        data:
+          security_group_id: "{{ result.json.results[0].custom_fields.security_group_id }}"
