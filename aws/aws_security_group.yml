@@ -17,9 +17,10 @@
         group_id: "{{ aws_sg_details.security_groups[0].group_id }}"
         description: "Updated security group for web servers"
         vpc_id: "{{ aws_sg_details.security_groups[0].vpc_id }}"
+        purge_rules: false
         rules:
-          - proto: tcp
+          - proto: "{{ firewall_protocol }}" # e.g., 'tcp'
             ports:
-              - 80
-            cidr_ip:  "0.0.0.0/0"
-            rule_desc: "Allow HTTP from anywhere"
+              - "{{ firewall_port }}"  # e.g., 80 for HTTP
+            cidr_ip:  "{{ firewall_cidr_ip }}"  # e.g., '0.0.0.0/0'
+            rule_desc: "{{ firewall_rule_description }}"  # e.g., 'Allow HTTP traffic from anywhere'
