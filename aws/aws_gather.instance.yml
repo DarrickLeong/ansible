@@ -1,5 +1,5 @@
 ---
-- name: AWS create instance
+- name: AWS gather instance
   hosts: localhost
   connection: local
   tasks:

@@ -1,0 +1,15 @@
+---
+- name: AWS edit security group
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Display aws security group details
+      amazon.aws.ec2_security_group_info:
+        region: ap-southeast-2
+        filters:
+          "group-id": "sg-04f26d8509c8019a8"
+      register: aws_sg_details
+      
+    - name: Display aws_sg_details
+      debug:
+        var: aws_sg_details

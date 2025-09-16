@@ -1,5 +1,5 @@
 ---
-- name: Gather instance fact
+- name: Deploy sample RHEL app
   hosts: all
   #connection: local
   gather_facts: false

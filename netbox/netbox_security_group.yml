@@ -1,0 +1,25 @@
+---
+- name: Gather Instance security Group facts from NetBox
+  hosts: localhost
+  gather_facts: false
+  connection: local
+
+  vars:
+    netbox_url: "http://{{ netbox_endpoint }}:8000"  # Replace with your NetBox URL
+    netbox_token: "{{ netbox_vault_token }}"  # Replace with your NetBox API token
+
+  tasks:
+    - name: Query NetBox for VM with specific public IP
+      ansible.builtin.uri:
+        url: "{{ netbox_url }}/api/virtualization/virtual-machines/?cf_public_ip={{ ec2_instance.instances[0].public_ip_address }}"
+        method: GET
+        headers:
+          Authorization: "Token {{ netbox_token }}"
+          Content-Type: "application/json"
+        validate_certs: false  # Set to 'true' if you have a valid SSL certificate
+        status_code: 200       # We expect a successful HTTP 200 OK
+      register: result
+
+    - name: Display NetBox VM query result
+      ansible.builtin.debug:
+        var: result
