@@ -1,6 +1,6 @@
 ---
 - name: Gather facts RHEL instance
-  hosts: localhost
+  hosts: all
   #connection: local
   gather_facts: true
   
