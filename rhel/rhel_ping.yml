@@ -1,0 +1,14 @@
+---
+- name: Gather facts RHEL instance
+  hosts: localhost
+  #connection: local
+  gather_facts: true
+  
+  tasks:
+    - name: Display localhost IP
+      debug:
+        msg: "Localhost IP: {{ ansible_default_ipv4.address }}"
+
+    - name: Display RHEL facts
+      debug:
+        var: ansible_facts
