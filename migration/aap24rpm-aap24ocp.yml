@@ -234,7 +234,7 @@
     when: "'localhost' in group_names"
 
   - name: Create a tar archive of the artifact directory
-    ansible.builtin.archive:
+    archive:
       path: "{{ artifact_path }}"
       # Saves the archive in the parent directory of artifact_path
       dest: "{{ artifact_path }}.tar"
