@@ -4,6 +4,7 @@
   #connection: local
   gather_facts: true
 
+#vars to be customized
   vars:
     pg_password: Admin123!
     pg_user: awx
@@ -11,6 +12,8 @@
     backup_path: /home/darrick/ansible/migration/backup
     setupsh_path: /home/darrick/ansible/ansible-automation-platform-setup-2.4-13/setup.sh
     pg_database: ansible24pg1.dlnuc.com
+    hub_database_name: automationhub
+    controller_database_name: awx
     aap_version: 2.4 # The version being migrated
     platform_type: rpm # The source platform type
     controller_version: 4.5.25
@@ -21,6 +24,12 @@
   - name: Gather facts of all instances
     debug:
       var: ansible_facts
+
+  - name: Check or install postgresql on localhost
+    ansible.builtin.yum:
+      name: postgresql
+      state: present
+    when: "'localhost' in group_names"
   
   - name: Create artifact directory on localhost
     ansible.builtin.file:
@@ -57,7 +66,6 @@
   #   ansible.builtin.command: "{{ setupsh_path }} -e 'backup_dest={{ backup_path }}' -b"
   #   when: "'localhost' in group_names"
 
-
   #Obtain the connection settings
   - name: Access the automation controller
     ansible.builtin.command: "awx-manage print_settings | grep '^DATABASES'"
@@ -68,6 +76,75 @@
     ansible.builtin.command: "grep '^DATABASES' /etc/pulp/settings.py"
     register: hub_db_settings
     when: "'automationhub' in group_names"
+
+  #create artifact directories controller/hub/custom_configs
+  - name: Create controller directory
+    ansible.builtin.file:
+      path: "{{ artifact_path }}/controller"
+      state: directory
+    when: "'localhost' in group_names"
+
+  - name: Create hub directory
+    ansible.builtin.file:
+      path: "{{ artifact_path }}/hub"
+      state: directory
+    when: "'localhost' in group_names"
+
+  - name: Create custom_configs directory
+    ansible.builtin.file:
+      path: "{{ artifact_path }}/custom_configs"
+      state: directory
+    when: "'localhost' in group_names"
+
+#Database dumps of all components
+  - name: Verify Automation Controller database connectivity
+    ansible.builtin.command: "psql -h {{ pg_database }} -U {{ pg_user }} -d awx -t -c 'SHOW server_version;'"
+    environment:
+      PGPASSWORD: "{{ pg_password }}"
+    register: controller_db_connectivity
+    when: "'localhost' in group_names"
+
+  - name: Dump Automation Controller database
+    ansible.builtin.command: "pg_dump -h {{ controller_pg_hostname }} -U {{ controller_pg_user }} -d {{ controller_database_name }} --clean --create -Fc -f '{{ artifact_path }}/controller/controller.pgc'"
+    environment:
+      PGPASSWORD: "{{ pg_password }}"
+    when: "'localhost' in group_names"
+
+  - name: Dump Automation Hub database
+    ansible.builtin.command: "pg_dump -h {{ hub_pg_hostname }} -U {{ hub_pg_user }} -d {{ hub_database_name }} --clean --create -Fc -f '{{ artifact_path }}/hub/hub_db.pgc'"
+    environment:
+      PGPASSWORD: "{{ hub_pg_password }}"
+    when: "'localhost' in group_names"
+
+  - name: Check file is present
+    ansible.builtin.stat:
+      path: "{{ artifact_path }}/controller/controller.pgc"
+    register: controller_dump
+    when: "'localhost' in group_names"
+
+  - name: Display controller dump file info
+    debug:
+      var: controller_dump
+    when: "'localhost' in group_names"
+
+  - name: Add controller database name to secrets file
+    ansible.builtin.shell: echo "controller_pg_database: {{ controller_database_name }}" >> secrets.yml
+    when: "'localhost' in group_names"
+
+  - name: Check file is present
+    ansible.builtin.stat:
+      path: "{{ artifact_path }}/hub/hub_db.pgc"
+    register: hub_dump
+    when: "'localhost' in group_names"
+
+  - name: Display hub dump file info
+    debug:
+      var: hub_dump
+    when: "'localhost' in group_names"
+
+  - name: Add hub database name to secrets file
+    ansible.builtin.shell: echo "hub_pg_database: {{ hub_database_name }}" >> secrets.yml
+    when: "'localhost' in group_names"
 
 #Validate the database size and make sure you have enough space on the filesystem for the pg_dump
   - name: Check postgres db size
@@ -107,7 +184,7 @@
     ansible.builtin.command: "cat /etc/pulp/certs/database_fields.symmetric.key"
     register: hub_node_key
     when: "'automationhub' in group_names"
-    
+
   - name: print hub_node_key
     debug:
       msg: "{{ hub_node_key.stdout }}"
