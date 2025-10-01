@@ -15,7 +15,6 @@
     platform_type: rpm # The source platform type
     controller_version: 4.5.25
     hub_version: 4.9.5
-#    gatewayversion:
   
   tasks:
   # Gather facts of all instances Controller/Automation Hub/PostgreSQL/Execution Nodes
@@ -27,6 +26,7 @@
     ansible.builtin.file:
       path: "{{ artifact_path }}"
       state: directory
+    when: "'localhost' in group_names"
   
   - name: Create Manifest file
     ansible.builtin.template:
@@ -89,7 +89,7 @@
     when: "'automationcontroller' in group_names"
 
   - name: Export secret key from the Automation Hub
-    ansible.builtin.command: "grep 'SECRET_KEY' /etc/pulp/settings.py | awk -F'=' '{ print $2}'"
+    ansible.builtin.shell: "grep 'SECRET_KEY' /etc/pulp/settings.py | awk -F'=' '{ print $2}'"
     register: hub_secret
     when: "'automationhub' in group_names"
 
