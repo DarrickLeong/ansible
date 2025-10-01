@@ -147,27 +147,27 @@
     when: "'localhost' in group_names"
 
 #Export automation controller custom configurations to localhost#
-- name: Pull configs from controller using rsync
-  ansible.builtin.shell: |
-    rsync -avz \
-      --exclude 'postgres.py' \
-      --exclude 'channels.py' \
-      --exclude 'caching.py' \
-      --exclude 'cluster_host_id.py' \
-      {{ ansible_user }}@{{ groups['automationcontroller'][0] }}:/etc/tower/conf.d/ \
-      "{{ artifact_path }}/controller/custom_configs/" # <-- Change this path
-  when: "''automationcontroller'' in group_names"
-  register: rsync_result
+  - name: Pull configs from controller using rsync
+    ansible.builtin.shell: |
+      rsync -avz \
+        --exclude 'postgres.py' \
+        --exclude 'channels.py' \
+        --exclude 'caching.py' \
+        --exclude 'cluster_host_id.py' \
+        {{ ansible_user }}@{{ groups['automationcontroller'][0] }}:/etc/tower/conf.d/ \
+        "{{ artifact_path }}/controller/custom_configs/" # <-- Change this path
+    when: "''automationcontroller'' in group_names"
+    register: rsync_result
 
-- name: List files at the folder
-  ansible.builtin.command: "ls -l {{ artifact_path }}/controller/custom_configs/" # <-- Change this path
-  when: "'localhost' in group_names"
-  register: list_files
-  
-- name: Display list of files
-  debug:
-    msg: "{{ list_files.stdout }}"
-  when: "'localhost' in group_names"
+  - name: List files at the folder
+    ansible.builtin.command: "ls -l {{ artifact_path }}/controller/custom_configs/" # <-- Change this path
+    when: "'localhost' in group_names"
+    register: list_files
+
+  - name: Display list of files
+    debug:
+      msg: "{{ list_files.stdout }}"
+    when: "'localhost' in group_names"
   
 # #Database dumps of all components#
 #   - name: Verify Automation Controller database connectivity
