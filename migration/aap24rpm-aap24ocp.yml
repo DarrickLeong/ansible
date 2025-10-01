@@ -16,9 +16,9 @@
   - name: Verify PostgreSQL version
     ansible.builtin.command: "PGPASSWORD='{{ pg_password }}' psql -h db.example.com -U myuser -d mydatabase -c 'SELECT version();'"
     register: postgresql_version
-    when: "'postgresql' in group_names"
+    when: "'database' in group_names"
 
   - name: Display PostgreSQL version
     debug:
       msg: "{{ postgresql_version.stdout }}"
-    when: "'postgresql' in group_names"
+    when: "'database' in group_names"
