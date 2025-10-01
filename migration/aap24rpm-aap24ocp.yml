@@ -204,10 +204,6 @@
       var: controller_dump
     when: "'localhost' in group_names"
 
-  - name: Add controller database name to secrets file
-    ansible.builtin.shell: 'echo "controller_pg_database: {{ controller_database_name }}" >> secrets.yml'
-    when: "'localhost' in group_names"
-
   - name: Check file is present
     ansible.builtin.stat:
       path: "{{ artifact_path }}/hub/hub_db.pgc"
@@ -219,6 +215,63 @@
       var: hub_dump
     when: "'localhost' in group_names"
 
-  - name: Add hub database name to secrets file
-    ansible.builtin.shell: 'echo "hub_pg_database: {{ hub_database_name }}" >> secrets.yml'
+#Package the artifact directory#
+  - name: Generate checksums for all .pgc files
+    ansible.builtin.shell:
+    # The '>' operator creates or overwrites the file, ensuring it's fresh.
+    # This is more efficient than checking for the file and deleting it first.
+      cmd: 'find . -type f -name "*.pgc" -exec sha256sum {} + > sha256sum.txt'
+    args:
+      # Runs the command inside the specified directory
+      chdir: "{{ artifact_path }}"
+    changed_when: true # This task should always report a change
+    register: checksum_file
+    when: "'localhost' in group_names"
+  
+  - name: Display checksum file creation result
+    ansible.builtin.debug:
+      var: checksum_file
+    when: "'localhost' in group_names"
+
+  - name: Create a tar archive of the artifact directory
+    ansible.builtin.archive:
+      path: "{{ artifact_path }}"
+      # Saves the archive in the parent directory of artifact_path
+      dest: "{{ artifact_path }}.tar"
+      format: tar
+    when: "'localhost' in group_names"
+    
+  - name: Get checksum of the new tar archive
+    ansible.builtin.stat:
+      path: "{{ artifact_path }}.tar"
+      checksum_algorithm: sha256
+    register: tar_stat
+    when: "'localhost' in group_names"
+
+  - name: Write the tar archive's checksum to a file
+    ansible.builtin.copy:
+      # Creates the content in the format 'sha256sum' expects
+      content: "{{ tar_stat.stat.checksum }}  {{ artifact_path | basename }}.tar\n"
+      dest: "{{ artifact_path }}.tar.sha256"
+    when: "'localhost' in group_names"
+
+  - name: Verify the integrity of the tar archive
+    ansible.builtin.command: "sha256sum --check {{ artifact_path | basename }}.tar.sha256"
+    args:
+      # Runs the check in the directory containing the tarball
+      chdir: "{{ artifact_path | dirname }}"
+    changed_when: false # This is a validation step, not a change
+    when: "'localhost' in group_names"
+
+  - name: List the contents of the final tarball for verification
+    ansible.builtin.command: "tar tvf {{ artifact_path | basename }}.tar"
+    args:
+      chdir: "{{ artifact_path | dirname }}"
+    register: tar_contents
+    changed_when: false
+    when: "'localhost' in group_names"
+
+  - name: Display the tarball contents
+    ansible.builtin.debug:
+      var: tar_contents.stdout_lines
     when: "'localhost' in group_names"
