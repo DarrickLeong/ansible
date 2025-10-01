@@ -71,7 +71,7 @@
 
 #Validate the database size and make sure you have enough space on the filesystem for the pg_dump
   - name: Check postgres db size
-    ansible.builtin.command: "psql -U {{ pg_user }} -c '\l+'"
+    ansible.builtin.command: "psql -U {{ pg_user }} -c '\\l+'"
     environment:
       PGPASSWORD: "{{ pg_password }}"
     register: postgresql_size
