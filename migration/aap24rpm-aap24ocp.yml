@@ -7,14 +7,32 @@
   vars:
     pg_password: Admin123!
     pg_user: awx
+    artifact_path: /home/darrick/ansible/migration/artifact
     backup_path: /home/darrick/ansible/migration/backup
     setupsh_path: /home/darrick/ansible/ansible-automation-platform-setup-2.4-13/setup.sh
+    pg_database: ansible24pg1.dlnuc.com
+    aap_version: 2.4 # The version being migrated
+    platform_type: rpm # The source platform type
+    controller_version: 4.5.25
+    hub_version: 4.9.5
+#    gatewayversion:
   
   tasks:
   # Gather facts of all instances Controller/Automation Hub/PostgreSQL/Execution Nodes
   - name: Gather facts of all instances
     debug:
       var: ansible_facts
+  
+  - name: Create artifact directory on localhost
+    ansible.builtin.file:
+      path: "{{ artifact_path }}"
+      state: directory
+  
+  - name: Create Manifest file
+    ansible.builtin.template:
+      src: ../templates/manifest.yml.j2
+      dest: "{{ artifact_path }}/manifest.yml"
+    when: "'localhost' in group_names"
 
   - name: Verify PostgreSQL version
     ansible.builtin.command: "psql -U {{ pg_user }} -c 'SELECT version();'"
@@ -29,6 +47,59 @@
       msg: "{{ postgresql_version.stdout }}"
     when: "'database' in group_names"
 
-  - name: Create a complete backup of the source environment
-    ansible.builtin.command: "{{ setupsh_path }} -e 'backup_dest={{ backup_path }}' -b"
+  - name: Check if backup files already exist
+    ansible.builtin.stat:
+      path: "{{ backup_path }}"
+    register: backup_stat
+    when: "'localhost' in group_names"
+
+  # - name: Create a complete backup of the source environment
+  #   ansible.builtin.command: "{{ setupsh_path }} -e 'backup_dest={{ backup_path }}' -b"
+  #   when: "'localhost' in group_names"
+
+
+  #Obtain the connection settings
+  - name: Access the automation controller
+    ansible.builtin.command: "awx-manage print_settings | grep '^DATABASES'"
+    when: "'automationcontroller' in group_names"
+    register: controller_db_settings
+
+  - name: Access the automation hub Nodes
+    ansible.builtin.command: "grep '^DATABASES' /etc/pulp/settings.py"
+    register: hub_db_settings
+    when: "'automationhub' in group_names"
+
+#Validate the database size and make sure you have enough space on the filesystem for the pg_dump
+  - name: Check postgres db size
+    ansible.builtin.command: "psql -U {{ pg_user }} -c '\l+'"
+    environment:
+      PGPASSWORD: "{{ pg_password }}"
+    register: postgresql_size
+    when: "'database' in group_names"
+
+  - name: Display PostgreSQL db size
+    debug:
+      msg: "{{ postgresql_size.stdout }}"
+    when: "'database' in group_names"
+
+#Export secrets from the RPM environment from one node of each component group
+  - name: Export secrets from the Automation Controller
+    ansible.builtin.command: "cat /etc/tower/SECRET_KEY"
+    register: controller_secret
+    when: "'automationcontroller' in group_names"
+
+  - name: Export secret key from the Automation Hub
+    ansible.builtin.command: "grep 'SECRET_KEY' /etc/pulp/settings.py | awk -F'=' '{ print $2}'"
+    register: hub_secret
+    when: "'automationhub' in group_names"
+
+  - name: Export automation hub node symmetric.key
+    ansible.builtin.command: "cat /etc/pulp/certs/database_fields.symmetric.key"
+    register: hub_node_key
+    when: "'automationhub' in group_names"
+
+  - name: create secrets.yml file
+    ansible.builtin.template:
+      src: ../templates/secrets.yml.j2
+      dest: /tmp/secrets.yml
     when: "'localhost' in group_names"
