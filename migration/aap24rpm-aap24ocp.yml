@@ -30,4 +30,4 @@
 
   - name: Create a complete backup of the source environment
     ansible.builtin.command: "./setup.sh -e 'backup_dest={{ backup_path }}' -b"
-    when: "localhost in group_names"
+    when: "'localhost' in group_names"
