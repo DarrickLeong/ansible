@@ -88,14 +88,29 @@
     register: controller_secret
     when: "'automationcontroller' in group_names"
 
+  - name: print controller_secret
+    debug:
+      msg: "{{ controller_secret.stdout }}"
+    when: "'automationcontroller' in group_names"
+
   - name: Export secret key from the Automation Hub
     ansible.builtin.shell: "grep 'SECRET_KEY' /etc/pulp/settings.py | awk -F'=' '{ print $2}'"
     register: hub_secret
+    when: "'automationhub' in group_names"
+  
+  - name: print hub_secret
+    debug:
+      msg: "{{ hub_secret.stdout }}"
     when: "'automationhub' in group_names"
 
   - name: Export automation hub node symmetric.key
     ansible.builtin.command: "cat /etc/pulp/certs/database_fields.symmetric.key"
     register: hub_node_key
+    when: "'automationhub' in group_names"
+    
+  - name: print hub_node_key
+    debug:
+      msg: "{{ hub_node_key.stdout }}"
     when: "'automationhub' in group_names"
 
   - name: create secrets.yml file
