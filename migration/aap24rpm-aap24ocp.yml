@@ -155,7 +155,7 @@
         --exclude 'caching.py' \
         --exclude 'cluster_host_id.py' \
         root@{{ groups['automationcontroller'][0] }}:/etc/tower/conf.d/ \
-        "{{ artifact_path }}/controller/custom_configs/" # <-- Change this path
+        darrick@bastion.dlnuc.com:"{{ artifact_path }}/controller/custom_configs/" # <-- Change this path
     when: "'automationcontroller' in group_names"
     register: rsync_result
 
