@@ -7,6 +7,7 @@
   vars:
     pg_password: Admin123!
     pg_user: awx
+    backup_path: /home/darrick/ansible/migration/backup
   
   tasks:
   # Gather facts of all instances Controller/Automation Hub/PostgreSQL/Execution Nodes
@@ -21,7 +22,12 @@
     register: postgresql_version
     when: "'database' in group_names"
 
-  - name: Display PostgreSQL version
+# Display PostgreSQL version, PostgreSQL version should be at least 15
+  - name: Display PostgreSQL version 
     debug:
       msg: "{{ postgresql_version.stdout }}"
     when: "'database' in group_names"
+
+  - name: Create a complete backup of the source environment
+    ansible.builtin.command: "./setup.sh -e 'backup_dest={{ backup_path }}' -b"
+    when: "localhost in group_names"
