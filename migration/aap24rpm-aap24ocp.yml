@@ -12,6 +12,8 @@
     backup_path: /home/darrick/ansible/migration/backup
     setupsh_path: /home/darrick/ansible/ansible-automation-platform-setup-2.4-13/setup.sh
     pg_database: ansible24pg1.dlnuc.com
+    controller_pg_hostname: ansible24pg1.dlnuc.com
+    hub_pg_hostname: ansible24pg1.dlnuc.com
     hub_database_name: automationhub
     controller_database_name: awx
     aap_version: 2.4 # The version being migrated
