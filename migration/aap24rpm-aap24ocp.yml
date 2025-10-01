@@ -13,9 +13,11 @@
     setupsh_path: /home/darrick/ansible/ansible-automation-platform-setup-2.4-13/setup.sh
     pg_database: ansible24pg1.dlnuc.com
     controller_pg_hostname: ansible24pg1.dlnuc.com
-    hub_pg_hostname: ansible24pg1.dlnuc.com
-    hub_database_name: automationhub
+    controller_pg_user: awx
     controller_database_name: awx
+    hub_pg_hostname: ansible24pg1.dlnuc.com
+    hub_pg_user: automationhub
+    hub_database_name: automationhub
     aap_version: 2.4 # The version being migrated
     platform_type: rpm # The source platform type
     controller_version: 4.5.25
