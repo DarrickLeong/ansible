@@ -201,7 +201,7 @@
     when: "'localhost' in group_names"
 
   - name: Add controller database name to secrets file
-    ansible.builtin.shell: echo "controller_pg_database: {{ controller_database_name }}" >> secrets.yml
+    ansible.builtin.shell: 'echo "controller_pg_database: {{ controller_database_name }}" >> secrets.yml'
     when: "'localhost' in group_names"
 
   - name: Check file is present
@@ -216,5 +216,5 @@
     when: "'localhost' in group_names"
 
   - name: Add hub database name to secrets file
-    ansible.builtin.shell: echo "hub_pg_database: {{ hub_database_name }}" >> secrets.yml
+    ansible.builtin.shell: 'echo "hub_pg_database: {{ hub_database_name }}" >> secrets.yml'
     when: "'localhost' in group_names"
