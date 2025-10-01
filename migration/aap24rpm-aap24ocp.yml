@@ -20,7 +20,7 @@
     hub_version: 4.9.5
   
   tasks:
-  # Gather facts of all instances Controller/Automation Hub/PostgreSQL/Execution Nodes
+# Gather facts of all instances Controller/Automation Hub/PostgreSQL/Execution Nodes#
   - name: Gather facts of all instances
     debug:
       var: ansible_facts
@@ -50,7 +50,7 @@
     register: postgresql_version
     when: "'database' in group_names"
 
-# Display PostgreSQL version, PostgreSQL version should be at least 15
+#Display PostgreSQL version, PostgreSQL version should be at least 15#
   - name: Display PostgreSQL version 
     debug:
       msg: "{{ postgresql_version.stdout }}"
@@ -66,7 +66,7 @@
   #   ansible.builtin.command: "{{ setupsh_path }} -e 'backup_dest={{ backup_path }}' -b"
   #   when: "'localhost' in group_names"
 
-  #Obtain the connection settings
+#Obtain the connection settings#
   - name: Access the automation controller
     ansible.builtin.command: "awx-manage print_settings | grep '^DATABASES'"
     when: "'automationcontroller' in group_names"
@@ -77,7 +77,7 @@
     register: hub_db_settings
     when: "'automationhub' in group_names"
 
-  #create artifact directories controller/hub/custom_configs
+#create artifact directories controller/hub/custom_configs#
   - name: Create controller directory
     ansible.builtin.file:
       path: "{{ artifact_path }}/controller"
@@ -96,7 +96,7 @@
       state: directory
     when: "'localhost' in group_names"
 
-#Validate the database size and make sure you have enough space on the filesystem for the pg_dump
+#Validate the database size and make sure you have enough space on the filesystem for the pg_dump#
   - name: Check postgres db size
     ansible.builtin.command: "psql -U {{ pg_user }} -c '\\l+'"
     environment:
@@ -109,7 +109,7 @@
       msg: "{{ postgresql_size.stdout }}"
     when: "'database' in group_names"
 
-#Export secrets from the RPM environment from one node of each component group
+#Export secrets from the RPM environment from one node of each component group#
   - name: Export secrets from the Automation Controller
     ansible.builtin.command: "cat /etc/tower/SECRET_KEY"
     register: controller_secret
@@ -146,52 +146,79 @@
       dest: "{{ artifact_path }}/secrets.yml"
     when: "'localhost' in group_names"
 
-#Database dumps of all components
-  - name: Verify Automation Controller database connectivity
-    ansible.builtin.command: "psql -h {{ pg_database }} -U {{ pg_user }} -d awx -t -c 'SHOW server_version;'"
-    environment:
-      PGPASSWORD: "{{ pg_password }}"
-    register: controller_db_connectivity
+#Export automation controller custom configurations to localhost#
+  - name: 1. Find all custom configuration files
+    ansible.builtin.find:
+      paths: /etc/tower/conf.d
+      patterns: "*.py"
+      # This list contains the filenames to exclude from the search
+      excludes:
+        - "postgres.py"
+        - "channels.py"
+        - "caching.py"
+        - "cluster_host_id.py"
+    register: custom_config_files
+    when: "'automationcontroller' in group_names"
+
+  - name: 3. Fetch the configuration files to the local machine
+    ansible.builtin.fetch:
+    # 'item.path' is the full path of a file found in the first task
+      src: "{{ item.path }}"
+      # This is the destination on your local machine
+      dest: "{{ artifact_path }}/controller/custom_configs/"
+      # 'flat: yes' removes the remote directory structure, copying just the file
+      flat: yes
+    loop: "{{ custom_config_files.files }}"
+    loop_control:
+      label: "{{ item.path }}" # Makes playbook output cleaner
     when: "'localhost' in group_names"
 
-  - name: Dump Automation Controller database
-    ansible.builtin.command: "pg_dump -h {{ controller_pg_hostname }} -U {{ controller_pg_user }} -d {{ controller_database_name }} --clean --create -Fc -f '{{ artifact_path }}/controller/controller.pgc'"
-    environment:
-      PGPASSWORD: "{{ pg_password }}"
-    when: "'localhost' in group_names"
+# #Database dumps of all components#
+#   - name: Verify Automation Controller database connectivity
+#     ansible.builtin.command: "psql -h {{ pg_database }} -U {{ pg_user }} -d awx -t -c 'SHOW server_version;'"
+#     environment:
+#       PGPASSWORD: "{{ pg_password }}"
+#     register: controller_db_connectivity
+#     when: "'localhost' in group_names"
 
-  - name: Dump Automation Hub database
-    ansible.builtin.command: "pg_dump -h {{ hub_pg_hostname }} -U {{ hub_pg_user }} -d {{ hub_database_name }} --clean --create -Fc -f '{{ artifact_path }}/hub/hub_db.pgc'"
-    environment:
-      PGPASSWORD: "{{ hub_pg_password }}"
-    when: "'localhost' in group_names"
+#   - name: Dump Automation Controller database
+#     ansible.builtin.command: "pg_dump -h {{ controller_pg_hostname }} -U {{ controller_pg_user }} -d {{ controller_database_name }} --clean --create -Fc -f '{{ artifact_path }}/controller/controller.pgc'"
+#     environment:
+#       PGPASSWORD: "{{ pg_password }}"
+#     when: "'localhost' in group_names"
 
-  - name: Check file is present
-    ansible.builtin.stat:
-      path: "{{ artifact_path }}/controller/controller.pgc"
-    register: controller_dump
-    when: "'localhost' in group_names"
+#   - name: Dump Automation Hub database
+#     ansible.builtin.command: "pg_dump -h {{ hub_pg_hostname }} -U {{ hub_pg_user }} -d {{ hub_database_name }} --clean --create -Fc -f '{{ artifact_path }}/hub/hub_db.pgc'"
+#     environment:
+#       PGPASSWORD: "{{ hub_pg_password }}"
+#     when: "'localhost' in group_names"
 
-  - name: Display controller dump file info
-    debug:
-      var: controller_dump
-    when: "'localhost' in group_names"
+#   - name: Check file is present
+#     ansible.builtin.stat:
+#       path: "{{ artifact_path }}/controller/controller.pgc"
+#     register: controller_dump
+#     when: "'localhost' in group_names"
 
-  - name: Add controller database name to secrets file
-    ansible.builtin.shell: echo "controller_pg_database: {{ controller_database_name }}" >> secrets.yml
-    when: "'localhost' in group_names"
+#   - name: Display controller dump file info
+#     debug:
+#       var: controller_dump
+#     when: "'localhost' in group_names"
 
-  - name: Check file is present
-    ansible.builtin.stat:
-      path: "{{ artifact_path }}/hub/hub_db.pgc"
-    register: hub_dump
-    when: "'localhost' in group_names"
+#   - name: Add controller database name to secrets file
+#     ansible.builtin.shell: echo "controller_pg_database: {{ controller_database_name }}" >> secrets.yml
+#     when: "'localhost' in group_names"
 
-  - name: Display hub dump file info
-    debug:
-      var: hub_dump
-    when: "'localhost' in group_names"
+#   - name: Check file is present
+#     ansible.builtin.stat:
+#       path: "{{ artifact_path }}/hub/hub_db.pgc"
+#     register: hub_dump
+#     when: "'localhost' in group_names"
 
-  - name: Add hub database name to secrets file
-    ansible.builtin.shell: echo "hub_pg_database: {{ hub_database_name }}" >> secrets.yml
-    when: "'localhost' in group_names"
+#   - name: Display hub dump file info
+#     debug:
+#       var: hub_dump
+#     when: "'localhost' in group_names"
+
+#   - name: Add hub database name to secrets file
+#     ansible.builtin.shell: echo "hub_pg_database: {{ hub_database_name }}" >> secrets.yml
+#     when: "'localhost' in group_names"
