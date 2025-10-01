@@ -101,5 +101,5 @@
   - name: create secrets.yml file
     ansible.builtin.template:
       src: ../templates/secrets.yml.j2
-      dest: /tmp/secrets.yml
+      dest: "{{ artifact_path }}/secrets.yml"
     when: "'localhost' in group_names"
