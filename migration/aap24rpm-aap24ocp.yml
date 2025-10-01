@@ -6,6 +6,7 @@
 
   vars:
     pg_password: Admin123!
+    pg_user: awx
   
   tasks:
   # Gather facts of all instances Controller/Automation Hub/PostgreSQL/Execution Nodes
@@ -14,7 +15,7 @@
       var: ansible_facts
 
   - name: Verify PostgreSQL version
-    ansible.builtin.command: "psql -h db.example.com -U myuser -d mydatabase -c 'SELECT version();'"
+    ansible.builtin.command: "psql -U {{ pg_user }} -c 'SELECT version();'"
     environment:
       PGPASSWORD: "{{ pg_password }}"
     register: postgresql_version
