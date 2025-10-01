@@ -234,11 +234,12 @@
     when: "'localhost' in group_names"
 
   - name: Create a tar archive of the artifact directory
-    archive:
-      path: "{{ artifact_path }}"
-      # Saves the archive in the parent directory of artifact_path
-      dest: "{{ artifact_path }}.tar"
-      format: tar
+    ansible.builtin.shell:
+      # The command is: tar -cf <archive_name> <directory_to_archive>
+      cmd: "tar -cf {{ artifact_path }}.tar {{ artifact_path | basename }}"
+    args:
+      # This runs the command in the parent directory of artifact_path
+      chdir: "{{ artifact_path | dirname }}"
     when: "'localhost' in group_names"
     
   - name: Get checksum of the new tar archive
