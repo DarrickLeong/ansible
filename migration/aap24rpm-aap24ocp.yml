@@ -190,7 +190,7 @@
   - name: Dump Automation Hub database
     ansible.builtin.command: "pg_dump -h {{ hub_pg_hostname }} -U {{ hub_pg_user }} -d {{ hub_database_name }} --clean --create -Fc -f '{{ artifact_path }}/hub/hub_db.pgc'"
     environment:
-      PGPASSWORD: "{{ hub_pg_password }}"
+      PGPASSWORD: "{{ pg_password }}"
     when: "'localhost' in group_names"
 
   - name: Check file is present
