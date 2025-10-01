@@ -8,6 +8,7 @@
     pg_password: Admin123!
     pg_user: awx
     backup_path: /home/darrick/ansible/migration/backup
+    setupsh_path: /home/darrick/ansible/ansible-automation-platform-setup-2.4-13/setup.sh
   
   tasks:
   # Gather facts of all instances Controller/Automation Hub/PostgreSQL/Execution Nodes
@@ -29,5 +30,5 @@
     when: "'database' in group_names"
 
   - name: Create a complete backup of the source environment
-    ansible.builtin.command: "./setup.sh -e 'backup_dest={{ backup_path }}' -b"
+    ansible.builtin.command: "{{ setupsh_path }} -e 'backup_dest={{ backup_path }}' -b"
     when: "'localhost' in group_names"
