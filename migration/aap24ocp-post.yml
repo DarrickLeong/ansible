@@ -1,0 +1,12 @@
+---
+- name: AAP24OCP Import Migration
+  hosts: all
+  #connection: local
+  gather_facts: true
+
+#vars to be customized
+  vars:
+  
+  tasks:
+# Begin by scaling down the Ansible Automation Platform deployment #
+oc patch ansibleautomationplatform aap --type merge -p '{"spec":{"idle_deployment":true}}'

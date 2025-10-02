@@ -1,5 +1,5 @@
 ---
-- name: Migration AAP24RPM to AAP24OCP
+- name: Migration AAP24RPM pre work
   hosts: all
   #connection: local
   gather_facts: true
