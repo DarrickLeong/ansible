@@ -12,13 +12,14 @@
 oc patch automationcontrollers ansiblecontroller --type merge -p '{"spec":{"idle_deployment":true}}' -n aap
 
 oc patch automationcontrollers ansiblecontroller --type merge -p '{"spec":{"replicas":0}}' -n aap
+####manually scale down all Automation hub deployments, starting with operator and then the rest of the deployments
 
-oc patch automationhubs automationhub --type merge -p '{"spec":{"worker":{"replicas":0}}}' -n aap
-oc patch automationhubs automationhub --type merge -p '{"spec":{"web":{"replicas":0}}}' -n aap
-oc patch automationhubs automationhub --type merge -p '{"spec":{"content":{"replicas":0}}}' -n aap
-oc patch automationhubs automationhub --type merge -p '{"spec":{"api":{"replicas":0}}}' -n aap
-oc patch automationhubs automationhub --type merge -p '{"spec":{"redis":{"replicas":0}}}' -n aap
-oc patch automationhubs automationhub --type merge -p '{"spec":{"resource_manager":{"replicas":0}}}' -n aap
+# oc patch automationhubs automationhub --type merge -p '{"spec":{"worker":{"replicas":0}}}' -n aap
+# oc patch automationhubs automationhub --type merge -p '{"spec":{"web":{"replicas":0}}}' -n aap
+# oc patch automationhubs automationhub --type merge -p '{"spec":{"content":{"replicas":0}}}' -n aap
+# oc patch automationhubs automationhub --type merge -p '{"spec":{"api":{"replicas":0}}}' -n aap
+# oc patch automationhubs automationhub --type merge -p '{"spec":{"redis":{"replicas":0}}}' -n aap
+# oc patch automationhubs automationhub --type merge -p '{"spec":{"resource_manager":{"replicas":0}}}' -n aap
 
 apiVersion: v1
 kind: PersistentVolumeClaim
