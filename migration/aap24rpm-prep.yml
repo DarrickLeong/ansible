@@ -29,11 +29,11 @@
     debug:
       var: ansible_facts
 
-  - name: Check or install postgresql on localhost
-    ansible.builtin.yum:
-      name: postgresql
-      state: present
-    when: "'localhost' in group_names"
+  # - name: Check or install postgresql on localhost
+  #   ansible.builtin.yum:
+  #     name: postgresql
+  #     state: present
+  #   when: "'localhost' in group_names"
   
   - name: Create artifact directory on localhost
     ansible.builtin.file:

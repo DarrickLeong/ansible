@@ -9,4 +9,140 @@
   
   tasks:
 # Begin by scaling down the Ansible Automation Platform deployment #
-oc patch ansibleautomationplatform aap --type merge -p '{"spec":{"idle_deployment":true}}'
+oc patch automationcontrollers ansiblecontroller --type merge -p '{"spec":{"idle_deployment":true}}' -n aap
+
+oc patch automationcontrollers ansiblecontroller --type merge -p '{"spec":{"replicas":0}}' -n aap
+
+oc patch automationhubs automationhub --type merge -p '{"spec":{"worker":{"replicas":0}}}' -n aap
+oc patch automationhubs automationhub --type merge -p '{"spec":{"web":{"replicas":0}}}' -n aap
+oc patch automationhubs automationhub --type merge -p '{"spec":{"content":{"replicas":0}}}' -n aap
+oc patch automationhubs automationhub --type merge -p '{"spec":{"api":{"replicas":0}}}' -n aap
+oc patch automationhubs automationhub --type merge -p '{"spec":{"redis":{"replicas":0}}}' -n aap
+oc patch automationhubs automationhub --type merge -p '{"spec":{"resource_manager":{"replicas":0}}}' -n aap
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: aap-temp-pvc
+  namespace: aap
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 200Gi
+
+oc create -f aap-temp-pvc.yml
+
+echo $(oc get pod/ansiblecontroller-postgres-15-0 -o jsonpath="{.spec.containers[*].image}") -n aap
+registry.redhat.io/rhel8/postgresql-15@sha256:b70af4767a5b34c4a67761aa28bee72b4f9cd1ce31245596640371f670d0dbba
+
+echo $(oc get pod/automationhub-postgres-15-0 -o jsonpath="{.spec.containers[*].image}") -n aap
+registry.redhat.io/rhel8/postgresql-15@sha256:b70af4767a5b34c4a67761aa28bee72b4f9cd1ce31245596640371f670d0dbba -n aap
+
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: aap-temp-postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aap-temp-postgres
+  template:
+    metadata:
+      labels:
+        app: aap-temp-postgres
+    spec:
+      containers:
+        - name: aap-temp-postgres
+          image: <postgres image from previous step>
+          command:
+            - /bin/sh
+            - '-c'
+            - sleep infinity
+          imagePullPolicy: Always
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+          volumeMounts:
+            - name: aap-temp-pvc
+              mountPath: /tmp/aap-temp-pvc
+      volumes:
+        - name: aap-temp-pvc
+          persistentVolumeClaim:
+            claimName: aap-temp-pvc
+
+oc create -f aap-temp-postgres.yml
+
+export AAP_TEMP_POSTGRES=$(oc get pods --no-headers -o custom-columns="NAME:.metadata.name" | grep aap-temp-postgres)
+echo $AAP_TEMP_POSTGRES
+aap-temp-postgres-c697847d7-7sgl7
+
+oc cp artifact.tar $AAP_TEMP_POSTGRES:/tmp/aap-temp-pvc/
+oc cp artifact.tar.sha256 $AAP_TEMP_POSTGRES:/tmp/aap-temp-pvc/
+
+echo
+for secret in ansiblecontroller-postgres-configuration automationhub-postgres-configuration
+do
+  echo $secret
+  echo "PASSWORD: `oc get secrets $secret -o jsonpath="{.data['password']}" | base64 -d`"
+  echo "USER: `oc get secrets $secret -o jsonpath="{.data['username']}" | base64 -d`"
+  echo "DATABASE: `oc get secrets $secret -o jsonpath="{.data['database']}" | base64 -d`"
+  echo
+done && echo "POSTGRES ADMIN PASSWORD: `oc get secrets aap-gateway-postgres-configuration -o jsonpath="{.data['postgres_admin_password']}" | base64 -d`"
+
+ansiblecontroller-postgres-configuration
+PASSWORD: irbtrY7KMvuprGXdUODM67K4B1X8prXx
+USER: automationcontroller
+DATABASE: automationcontroller
+
+automationhub-postgres-configuration
+PASSWORD: EqJp0eSENFXb7WqxnLUzuMNNBzrw1rnw
+USER: automationhub
+DATABASE: automationhub
+
+Error from server (NotFound): secrets "aap-gateway-postgres-configuration" not found
+POSTGRES ADMIN PASSWORD:
+
+Drop the automation controller database:
+dropdb -h ansiblecontroller-postgres-15 -U automationcontroller automationcontroller
+
+
+psql -h ansiblecontroller-postgres-15 -U automationcontroller -d postgres
+
+Alter the user temporarily with the CREATEDB role:
+psql #become root user
+postgres=# ALTER USER automationcontroller WITH CREATEDB;
+
+Create the database:
+createdb -h ansiblecontroller-postgres-15 -U automationcontroller automationcontroller
+
+Revert temporary user permission:
+postgres=# ALTER USER automationcontroller WITH NOCREATEDB;
+
+Restore the automation controller database:
+pg_restore --clean --if-exists --no-owner -h ansiblecontroller-postgres-15 -U automationcontroller -d automationcontroller controller/controller.pgc
+
+Restore the automation hub database:
+pg_restore --clean --if-exists --no-owner -h automationhub-postgres-15 -U automationhub -d automationhub hub/hub.pgc
+
+Restore the platform gateway database:
+pg_restore --clean --if-exists --no-owner -h aap-postgres-15 -U gateway -d gateway gateway/gateway.pgc
+
+
+Exit the pod:
+
+exit
+
+Replace database field encryption secrets.
+
+oc set data secret/aap-controller-secret-key secret_key="<unencoded controller_secret_key value from secrets.yml>"
+oc set data secret/aap-db-fields-encryption-secret secret_key="<unencoded gateway_secret_key value from secrets.yml>"
+oc set data secret/aap-hub-db-fields-encryption database_fields.symmetric.key="<unencoded hub_db_fields_encryption_key value from secrets.yml>"
+Show less
+
+
+Clean up the temporary PostgreSQL and PVC.
+oc delete -f aap-temp-postgres.yaml
+oc delete -f aap-temp-pvc.yaml
