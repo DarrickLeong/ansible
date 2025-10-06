@@ -248,7 +248,7 @@ oc set data secret/automationhub-db-fields-encryption database_fields.symmetric.
 
 #Scale back all Automation hub deployments manually, via the operator.
 
-curl -d '{"verify_checksums": true}' -X POST -k https://automationhub-aap.apps.cluster-6zjzq.6zjzq.sandbox5539.opentlc.com/api/galaxy/pulp/api/v3/repair/ -u admin:Admin123!
+curl -d '{"verify_checksums": true}' -X POST -k https://automationhub-aap<<ocp.cluster.url>>/api/galaxy/pulp/api/v3/repair/ -u admin:Admin123!
 
 ######################################
 
